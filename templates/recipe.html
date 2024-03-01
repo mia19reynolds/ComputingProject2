@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gyaldem Recipe Generator</title>
+</head>
+<body>
+    <h1>{{ recipe.title }}</h1>
+    <img src="{{ recipe['image'] }}">
+    <p>{{ recipe.summary|safe }}</p>
+    <p>Makes {{ recipe.servings }} servings</p>
+    <h2>Ingredients</h2>
+    <ul>
+        {% for ingredient in recipe.extendedIngredients %}
+        <li>
+            {{ ingredient.name }}
+            {{ ingredient.measures.metric.amount ~ ingredient.measures.metric.unitShort }}
+        </li>
+        {% endfor %}
+    </ul>
+    <h2>Steps</h2>
+    <ol>
+        {% for step in recipe.analyzedInstructions[0].steps %}
+        <li>{{ step.step }}</li>
+        {% endfor %}
+    </ol>
+</body>
+</html>

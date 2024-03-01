@@ -7,10 +7,14 @@
 </head>
 <body>
     <h1>Results</h1>
-    {% for x in results %}
-    <h3>{{ x['title'] }}</h2>
-    <img src="{{ x['image'] }}">
+    {% for result in results %}
+    <a href="http://127.0.0.1:5000/recipe?id={{ result['id']  }}">
+        <div>
+            <h3>{{ result['title'] }}</h2>
+            <img src="{{ result['image'] }}">
+        </div>
+    </a>
     <hr>
-{% endfor %}
+    {% endfor %}
 </body>
 </html>

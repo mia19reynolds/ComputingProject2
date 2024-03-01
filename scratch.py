@@ -2,6 +2,8 @@ import requests
 from flask import Flask, request, render_template
 
 app = Flask(__name__)
+#API key
+api_key = "653ac8f884cb4c99bdd950abd9d769c9"
 
 @app.route('/')
 def index():
@@ -10,10 +12,8 @@ def index():
 @app.route('/find_recipe', methods=['POST'])
 def process_form():
     user_input = request.form['user_input']
-    print('User Input: ', user_input)
+    print('User Input:', user_input)
 
-    #API key
-    api_key = "653ac8f884cb4c99bdd950abd9d769c9"
 
     # Endpoint URL
     endpoint = 'https://api.spoonacular.com/recipes/complexSearch'
@@ -30,21 +30,44 @@ def process_form():
 
     # Check if request was successful 
     if response.status_code == 200:
-    # Parse JSON response
+        # Parse JSON response
         data = response.json()
-
-        print(user_input)
 
         results = []
 
         # Print data recipe titles
         for result in data['results']:
-            print(result['image'])
             results.append(result)
         
+        # Return webpage
         return render_template('find_recipe.html', results=results)
 
-        # return 'Form submitted successfully'
+    else:
+        print('Error: ', response.status_code)
+
+@app.route('/recipe', methods=['GET'])
+def recipe():
+    # Get recipe id from URL parameter
+    recipeId = request.args.get('id')
+
+    # Endpoint URL
+    endpoint = "https://api.spoonacular.com/recipes/{0}/information".format(recipeId)
+
+    #  Search paramerters
+    params = {
+        'apiKey': api_key,
+    }
+
+    # GET request
+    response = requests.get(endpoint, params=params)
+
+    # Check if request was successful 
+    if response.status_code == 200:
+        # Parse JSON response
+        recipe = response.json()
+
+        # Return webpage
+        return render_template('recipe.html', recipe=recipe)
 
     else:
         print('Error: ', response.status_code)
