@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gyaldem Recipe Generator</title>
+</head>
+<body>
+    <h1>Results</h1>
+    {% for x in results %}
+    <h3>{{ x['title'] }}</h2>
+    <img src="{{ x['image'] }}">
+    <hr>
+{% endfor %}
+</body>
+</html>

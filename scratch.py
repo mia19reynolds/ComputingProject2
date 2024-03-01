@@ -35,11 +35,16 @@ def process_form():
 
         print(user_input)
 
+        results = []
+
         # Print data recipe titles
         for result in data['results']:
-            print(result['title'])
+            print(result['image'])
+            results.append(result)
+        
+        return render_template('find_recipe.html', results=results)
 
-        return 'Form submitted successfully'
+        # return 'Form submitted successfully'
 
     else:
         print('Error: ', response.status_code)
