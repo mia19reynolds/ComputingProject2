@@ -1,3 +1,4 @@
+import mysql.connector as mysql
 import requests
 from flask import Flask, request, render_template, redirect, url_for
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
@@ -6,6 +7,20 @@ from flask_login import LoginManager, UserMixin, login_user, login_required, log
 app = Flask(__name__)
 #API key
 api_key = "653ac8f884cb4c99bdd950abd9d769c9"
+
+HOST = "igor.gold.ac.uk"
+DATABASE = "avidl002_Project"
+USER = "avidl002"
+PASSWORD = "asdf"
+PORT = 3307
+
+db = mysql.connect(
+    host=HOST,
+    database=DATABASE,
+    user=USER,
+    password=PASSWORD,
+    port=PORT
+)
 
 login_manager = LoginManager(app)
 
