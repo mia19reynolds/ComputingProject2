@@ -1,15 +1,36 @@
 import requests
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, redirect, url_for
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+
 
 app = Flask(__name__)
 #API key
 api_key = "653ac8f884cb4c99bdd950abd9d769c9"
+
+login_manager = LoginManager(app)
+
+# Define a simple User class for Flask-Login
+class User(UserMixin):
+    def __init__(self, id, username):
+        self.id = id
+        self.username = username
+
+@login_manager.user_loader
+def load_user(user_id):
+    # Load user from database by user_id
+    cursor = db.cursor()
+    cursor.execute("SELECT id, name, email FROM Users WHERE id = %s", (user_id,))
+    user_data = cursor.fetchone()
+    if user_data:
+        return User(id=user_data[0], name=user_data[1], email=user_data[2])
+    return None
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
 @app.route('/find_recipe', methods=['POST'])
+@login_required
 def process_form():
     user_input = request.form['user_input']
     print('User Input:', user_input)
@@ -46,6 +67,7 @@ def process_form():
         print('Error: ', response.status_code)
 
 @app.route('/recipe', methods=['GET'])
+@login_required
 def recipe():
     # Get recipe id from URL parameter
     recipeId = request.args.get('id')
@@ -71,6 +93,36 @@ def recipe():
 
     else:
         print('Error: ', response.status_code)
+
+# New routes for authentication
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form['email']
+        # Assuming you have a 'password' field in your HTML form
+        password = request.form['password']
+
+        cursor = db.cursor()
+        cursor.execute("SELECT id, name, email FROM Users WHERE email = %s AND password = %s", (email, password))
+        user_data = cursor.fetchone()
+
+        if user_data:
+            user = User(id=user_data[0], name=user_data[1], email=user_data[2])
+            login_user(user)
+            return redirect(url_for('dashboard'))
+
+    return render_template('login.html')
+
+@app.route('/dashboard')
+@login_required
+def dashboard():
+    return f"Hello, {current_user.name} ({current_user.email})! This is your dashboard."
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
