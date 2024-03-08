@@ -11,18 +11,18 @@ login_manager = LoginManager(app)
 
 # Define a simple User class for Flask-Login
 class User(UserMixin):
-    def __init__(self, id, username):
-        self.id = id
-        self.username = username
+    def __init__(self, name, email):
+        self.name = name
+        self.email = email
 
 @login_manager.user_loader
-def load_user(user_id):
-    # Load user from database by user_id
+def load_user(user_name):
+    # Load user from database by name (treated as if it were the id)
     cursor = db.cursor()
-    cursor.execute("SELECT id, name, email FROM Users WHERE id = %s", (user_id,))
+    cursor.execute("SELECT name, email FROM Users WHERE name = %s", (user_name,))
     user_data = cursor.fetchone()
     if user_data:
-        return User(id=user_data[0], name=user_data[1], email=user_data[2])
+        return User(name=user_data[0], email=user_data[1])
     return None
 
 @app.route('/')
@@ -99,15 +99,14 @@ def recipe():
 def login():
     if request.method == 'POST':
         email = request.form['email']
-        # Assuming you have a 'password' field in your HTML form
         password = request.form['password']
 
         cursor = db.cursor()
-        cursor.execute("SELECT id, name, email FROM Users WHERE email = %s AND password = %s", (email, password))
+        cursor.execute("SELECT name, email FROM Users WHERE name = %s AND password = %s", (email, password))
         user_data = cursor.fetchone()
 
         if user_data:
-            user = User(id=user_data[0], name=user_data[1], email=user_data[2])
+            user = User(name=user_data[0], email=user_data[1])
             login_user(user)
             return redirect(url_for('dashboard'))
 
