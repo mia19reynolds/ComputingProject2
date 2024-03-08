@@ -109,23 +109,28 @@ def recipe():
     else:
         print('Error: ', response.status_code)
 
+
+# Check if login exists
+def login_exists(email, password):
+    cursor = db.cursor()
+    cursor.execute("SELECT COUNT(*) FROM users WHERE username = %s OR email = %s", (email, password))
+    count = cursor.fetchone()[0]
+    cursor.close()
+    return count > 0
+
 # New routes for authentication
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/login', methods=['POST'])
 def login():
-    if request.method == 'POST':
-        email = request.form['email']
-        password = request.form['password']
+    email = request.form['email']
+    password = request.form['password']
 
-        cursor = db.cursor()
-        cursor.execute("SELECT name, email FROM Users WHERE name = %s AND password = %s", (email, password))
-        user_data = cursor.fetchone()
-
-        if user_data:
-            user = User(name=user_data[0], email=user_data[1])
-            login_user(user)
-            return redirect(url_for('dashboard'))
-
-    return render_template('login.html')
+    # Check if the login exists
+    if login_exists(email, password):
+        print("Login Exists, reroute to correct page")
+        return redirect(url_for('dashboard'))
+    else:
+        print("Login does not exist in database, either credentials are wrong or user needs to sign up, need to create a  sign up page")
+        
 
 @app.route('/dashboard')
 @login_required
