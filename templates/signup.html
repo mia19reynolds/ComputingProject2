@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Document</title>
 </head>
 <body>
     <nav>
@@ -13,23 +13,20 @@
         <a href="http://127.0.0.1:5000/signup">Signup</a>
     </nav>
 
-    <h2>Login</h2>
-    <form method="post" action="http://127.0.0.1:5000/login">
+    <form method="post" action="http://127.0.0.1:5000/signup">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+        <br>
         <label for="email">Email:</label>
         <input type="email" id="email" name="email" required>
         <br>
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" required>
         <br>
-        <button type="submit">Login</button>
+        <label for="confirmPassword">Confirm Password:</label>
+        <input type="password" id="confirmPassword" name="confirmPassword" required>
+        <br>
+        <button type="submit">Signup</button>
     </form>
-    <br>
-    {% if error %}
-    <div class="alert alert-danger" role="alert">
-        {{ error }}
-    </div>
-    {% endif %}
-    <p>Don't have an account? <a href="http://127.0.0.1:5000/signup">Signup</a></p>
-
 </body>
 </html>

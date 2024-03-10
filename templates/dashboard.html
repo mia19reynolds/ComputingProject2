@@ -6,9 +6,15 @@
     <title>Dashboard</title>
 </head>
 <body>
+    <nav>
+        <a href="http://127.0.0.1:5000/index">Home</a>
+        <!-- <a href="http://127.0.0.1:5000/find_recipe">Find Recipe</a> -->
+        <a href="http://127.0.0.1:5000/login">Login</a>
+        <a href="http://127.0.0.1:5000/signup">Signup</a>
+    </nav>
 
     <h2>Dashboard</h2>
-    
+
     {% if current_user.is_authenticated %}
         <p>Hello, {{ current_user.name }}! This is your dashboard.</p>
         <!-- Add your dashboard content here -->

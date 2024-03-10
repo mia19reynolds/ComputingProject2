@@ -2,9 +2,13 @@ import mysql.connector as mysql
 import requests
 from flask import Flask, request, render_template, redirect, url_for
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from flask_bcrypt import generate_password_hash, check_password_hash
 
 
 app = Flask(__name__)
+
+# Secret key for session management
+app.secret_key = '123AMM'
 #API key
 api_key = "653ac8f884cb4c99bdd950abd9d769c9"
 
@@ -26,23 +30,32 @@ login_manager = LoginManager(app)
 
 # Define a simple User class for Flask-Login
 class User(UserMixin):
-    def __init__(self, name, email):
+    def __init__(self, id, name, email):
+        self.id = id
         self.name = name
         self.email = email
 
 @login_manager.user_loader
 def load_user(user_name):
     # Load user from database by name (treated as if it were the id)
+    print("Loading user:", user_name)
     cursor = db.cursor()
     cursor.execute("SELECT name, email FROM Users WHERE name = %s", (user_name,))
     user_data = cursor.fetchone()
     if user_data:
-        return User(name=user_data[0], email=user_data[1])
-    return None
+        user = User(name=user_data[0], email=user_data[1])
+        print("User loaded:", user)  # Add this line for debugging
+        return user
+    else:
+        print("User not found") 
+        return None
 
-@app.route('/')
+@app.route('/index', methods=['POST', 'GET'])
 def index():
-    return render_template('index.html')
+    if request.method == 'POST':
+        return render_template('index.html')
+    elif request.method == 'GET':
+        return render_template('index.html')
 
 @app.route('/find_recipe', methods=['POST'])
 @login_required
@@ -109,42 +122,125 @@ def recipe():
     else:
         print('Error: ', response.status_code)
 
+# User sign up 
+@app.route('/signup', methods=['POST', 'GET'])
+def signup():
+    print('route accessed')
+    if request.method == 'POST':
+        print('fomr submitted')
+        name = request.form['username']
+        email = request.form['email']
+        password = request.form['password']
+        confirm_password = request.form['confirmPassword']
+        print(f"Form data: name={name}, email={email}, password={password}, confirm_password={confirm_password}")
+
+        if password == confirm_password:
+            print('Passwords match')
+            cursor = db.cursor()
+            try:
+                # Check if user already exists (email)
+                cursor.execute("SELECT * FROM Users WHERE LOWER(email) = LOWER(%s)", (email,))
+                existing_user = cursor.fetchone()
+
+                if existing_user:
+                    # If user already exists, compare passwords
+                    # login_message = "User with this email already exists. Would you like to <a href='/login'>login</a>?"
+                    # return login_message
+                    print('User Exists')
+                    return render_template('signup.html', error="User with this email already exists. Would you like to <a href='/login'>login</a>?")
+                else:
+                    hashed_password = generate_password_hash(password).decode('utf-8')
+                    cursor.execute("INSERT INTO Users (name, email, password) VALUES (%s, %s, %s)", (name, email, hashed_password))
+                    db.commit()
+
+                    # Log in the user after signup
+                    user = User(id=None, name=name, email=email)
+                    login_user(user)
+                    print('User doesnt exist and has been added to sql table')
+
+                    # Redirect to another page if signup is successful
+                    return redirect(url_for('dashboard'))
+            except Exception as e:
+                print('gone in the except', e)
+                # Handle database errors or any other exceptions
+                return render_template('signup.html', error="An error occurred during signup. Please try again later.")
+            finally:
+                cursor.close()
+        else:
+            print('Passwords dont match')
+            return render_template('signup.html', error="Passwords do not match. Please try again.")
+    else:
+        return render_template('signup.html')
+
 
 # Check if login exists
-def login_exists(email, password):
+def login_exists(email):
     cursor = db.cursor()
-    cursor.execute("SELECT COUNT(*) FROM users WHERE username = %s OR email = %s", (email, password))
-    count = cursor.fetchone()[0]
-    cursor.close()
-    return count > 0
+    try:
+        cursor.execute("SELECT COUNT(*) FROM Users WHERE email = %s", (email,))
+        count = cursor.fetchone()[0]
+        return count > 0
+    finally:
+        cursor.close()
+
+def check_password(email, password):
+    cursor = db.cursor()
+    try:
+        cursor.execute("SELECT password FROM Users WHERE email = %s", (email,))
+        hashed_password = cursor.fetchone()
+        
+        if hashed_password:
+            hashed_password_str = hashed_password[0]  # Convert bytes to string
+            return check_password_hash(hashed_password_str, password)
+    finally:
+        cursor.close()
+    
+    return False
+
 
 # New routes for authentication
-@app.route('/login', methods=['POST'])
+@app.route('/login', methods=['POST', 'GET'])
 def login():
-    email = request.form['email']
-    password = request.form['password']
+    error = None
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
 
-    # Check if the login exists
-    if login_exists(email, password):
-        print("Login Exists, reroute to correct page")
-        return redirect(url_for('dashboard'))
-    else:
-        print("Login does not exist in database, either credentials are wrong or user needs to sign up, need to create a  sign up page")
+        # Check if the email exists in the database
+        if login_exists(email):
+            # Check if the password matches
+            if check_password(email, password):
+                # Retreive user information
+                user = load_user(email)
+
+                login_user(user)
+
+                # Redirect to dashboard
+                return redirect(url_for('dashboard'))
+            else:
+                error_message = "Incorrect password. Please check your credentials or sign up."
+                return render_template('./login.html', error=error_message)
+        else:
+            error = 'Invalid email or password. Please try again.'
+            return render_template('./login.html', error=error)
+
+    elif request.method == 'GET':
+        return render_template('login.html')
         
-
-@app.route('/dashboard')
+@app.route('/dashboard', methods=['POST', 'GET'])
 @login_required
 def dashboard():
-    return f"Hello, {current_user.name} ({current_user.email})! This is your dashboard."
+    return f"Hello! This is your dashboard."
 
-@app.route('/logout')
-@login_required
-def logout():
-    logout_user()
-    return redirect(url_for('index'))
+
+# @app.route('/logout')
+# @login_required
+# def logout():
+#     logout_user()
+#     return redirect(url_for('index'))
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=5000, use_reloader=False)
 
 
 # # Dynamic recipe options
