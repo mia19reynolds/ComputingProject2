@@ -1,14 +1,22 @@
 import mysql.connector as mysql
 import requests
-from flask import Flask, request, render_template, redirect, url_for
+from flask import Flask, request, render_template, redirect, url_for, session
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_bcrypt import generate_password_hash, check_password_hash
-
+from flask_session import Session
+from datetime import datetime, timedelta
 
 app = Flask(__name__)
 
 # Secret key for session management
 app.secret_key = '123AMM'
+
+app.config['SESSION_TYPE'] = 'filesystem'
+app.config['SESSION_PERMANENT'] = True
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)  # Example: session lasts for 7 days
+app.config['SESSION_COOKIE_SECURE'] = True  # Ensure session cookies are only sent over HTTPS
+app.config['SESSION_COOKIE_HTTPONLY'] = True  # Prevent JavaScript access to session cookies
+
 #API key
 api_key = "653ac8f884cb4c99bdd950abd9d769c9"
 
@@ -28,6 +36,8 @@ db = mysql.connect(
 
 login_manager = LoginManager(app)
 
+Session(app)
+
 # Define a simple User class for Flask-Login
 class User(UserMixin):
     def __init__(self, id, name, email):
@@ -36,15 +46,15 @@ class User(UserMixin):
         self.email = email
 
 @login_manager.user_loader
-def load_user(user_name):
+def load_user(email):
     # Load user from database by name (treated as if it were the id)
-    print("Loading user:", user_name)
+    print("Loading user:", email)
     cursor = db.cursor()
-    cursor.execute("SELECT name, email FROM Users WHERE name = %s", (user_name,))
+    cursor.execute("SELECT name, email FROM Users WHERE email = %s", (email,))
     user_data = cursor.fetchone()
     if user_data:
         user = User(name=user_data[0], email=user_data[1])
-        print("User loaded:", user)  # Add this line for debugging
+        print("User loaded:", user)  # Add this line for debuggings
         return user
     else:
         print("User not found") 
@@ -127,7 +137,7 @@ def recipe():
 def signup():
     print('route accessed')
     if request.method == 'POST':
-        print('fomr submitted')
+        print('form submitted')
         name = request.form['username']
         email = request.form['email']
         password = request.form['password']
@@ -148,6 +158,7 @@ def signup():
                     # return login_message
                     print('User Exists')
                     return render_template('signup.html', error="User with this email already exists. Would you like to <a href='/login'>login</a>?")
+
                 else:
                     hashed_password = generate_password_hash(password).decode('utf-8')
                     cursor.execute("INSERT INTO Users (name, email, password) VALUES (%s, %s, %s)", (name, email, hashed_password))
@@ -211,12 +222,24 @@ def login():
             # Check if the password matches
             if check_password(email, password):
                 # Retreive user information
-                user = load_user(email)
+
+                cursor = db.cursor()
+                cursor.execute("SELECT name FROM Users WHERE email = %s", (email,))
+                name = cursor.fetchone()[0]
+
+                cursor.close()
+                
+                user = User(id=None, name=name, email=email)
 
                 login_user(user)
+                print("User logged in: ", user.email)
 
-                # Redirect to dashboard
-                return redirect(url_for('dashboard'))
+                next_url = session.get('next', None)
+                if next_url:
+                    session.pop('next')
+                    return redirect(next_url)
+                else:
+                    return render_template('dashboard.html')
             else:
                 error_message = "Incorrect password. Please check your credentials or sign up."
                 return render_template('./login.html', error=error_message)

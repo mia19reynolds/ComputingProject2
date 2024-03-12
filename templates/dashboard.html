@@ -15,14 +15,5 @@
 
     <h2>Dashboard</h2>
 
-    {% if current_user.is_authenticated %}
-        <p>Hello, {{ current_user.name }}! This is your dashboard.</p>
-        <!-- Add your dashboard content here -->
-        <br>
-        <a href="{{ url_for('logout') }}">Logout</a>
-    {% else %}
-        <p>You are not logged in. Please <a href="{{ url_for('login') }}">login</a>.</p>
-    {% endif %}
-
 </body>
 </html>
