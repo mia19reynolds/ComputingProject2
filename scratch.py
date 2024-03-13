@@ -253,8 +253,37 @@ def login():
 @app.route('/dashboard', methods=['POST', 'GET'])
 @login_required
 def dashboard():
-    return f"Hello! This is your dashboard."
+    print("Current user:", current_user)
+    if request.method == 'POST':
+        print("Current user:", current_user)
+        return render_template('dashboard.html')
+    elif request.method == 'GET':
+        print("Current user:", current_user)
+        return render_template('dashboard.html')
 
+@app.route('/faqs', methods=['GET', 'POST'])
+def faqs():
+    if request.method == 'POST':
+        return render_template('faqs.html')
+    elif request.method == 'GET':
+        return render_template('faqs.html')
+
+@app.route('/account', methods=['GET', 'POST'])
+@login_required
+def account():
+    if request.method == 'POST':
+        return render_template('account.html')
+    elif request.method == 'GET':
+        return render_template('account.html')
+
+
+@app.route('/settings', methods=['GET', 'POST'])
+@login_required
+def settings():
+    if request.method == 'POST':
+        return render_template('settings.html')
+    elif request.method == 'GET':
+        return render_template('settings.html')
 
 # @app.route('/logout')
 # @login_required
