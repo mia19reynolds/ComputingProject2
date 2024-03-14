@@ -11,11 +11,11 @@ app = Flask(__name__)
 # Secret key for session management
 app.secret_key = '123AMM'
 
-app.config['SESSION_TYPE'] = 'filesystem'
-app.config['SESSION_PERMANENT'] = True
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)  # Example: session lasts for 7 days
-app.config['SESSION_COOKIE_SECURE'] = True  # Ensure session cookies are only sent over HTTPS
-app.config['SESSION_COOKIE_HTTPONLY'] = True  # Prevent JavaScript access to session cookies
+# app.config['SESSION_TYPE'] = 'filesystem'
+# app.config['SESSION_PERMANENT'] = True
+# app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)  # Example: session lasts for 7 days
+# app.config['SESSION_COOKIE_SECURE'] = True  # Ensure session cookies are only sent over HTTPS
+# app.config['SESSION_COOKIE_HTTPONLY'] = True  # Prevent JavaScript access to session cookies
 
 #API key
 api_key = "653ac8f884cb4c99bdd950abd9d769c9"
@@ -34,16 +34,15 @@ db = mysql.connect(
     port=PORT
 )
 
-login_manager = LoginManager(app)
+login_manager = LoginManager()
+login_manager.init_app(app)
 
-Session(app)
+# Session(app)
 
 # Define a simple User class for Flask-Login
 class User(UserMixin):
-    def __init__(self, id, name, email):
-        self.id = id
-        self.name = name
-        self.email = email
+    def __init__(self, email):
+        self.id = email
 
 @login_manager.user_loader
 def load_user(email):
@@ -53,7 +52,7 @@ def load_user(email):
     cursor.execute("SELECT name, email FROM Users WHERE email = %s", (email,))
     user_data = cursor.fetchone()
     if user_data:
-        user = User(name=user_data[0], email=user_data[1])
+        user = User(email)
         print("User loaded:", user)  # Add this line for debuggings
         return user
     else:
@@ -62,75 +61,120 @@ def load_user(email):
 
 @app.route('/', methods=['POST', 'GET'])
 def index():
-    if request.method == 'POST':
-        return render_template('index.html')
-    elif request.method == 'GET':
-        return render_template('index.html')
+    # if not session.get("email"):
+    #     return redirect("/")
+    return render_template('index.html')
 
-@app.route('/find_recipe', methods=['POST'])
+@app.route('/find_recipe', methods=['GET', 'POST'])
 @login_required
 def process_form():
-    user_input = request.form['user_input']
-    print('User Input:', user_input)
-
-
-    # Endpoint URL
-    endpoint = 'https://api.spoonacular.com/recipes/complexSearch'
-
-
-    #  Search paramerters
-    params = {
-        'apiKey': api_key,
-        'query': user_input, # User written imput (natural language)
-    }
-
-    # GET request
-    response = requests.get(endpoint, params=params)
-
-    # Check if request was successful 
-    if response.status_code == 200:
-        # Parse JSON response
-        data = response.json()
-
-        results = []
-
-        # Print data recipe titles
-        for result in data['results']:
-            results.append(result)
-        
-        # Return webpage
-        return render_template('find_recipe.html', results=results)
-
+    if request.method == 'POST':
+        try:
+            user_input = request.form['user_input']
+            print('User Input:', user_input)
+ 
+            # Endpoint URL
+            endpoint = 'https://api.spoonacular.com/recipes/complexSearch'
+ 
+            # Search parameters
+            params = {
+                'apiKey': api_key,
+                'query': user_input,  # User written input (natural language)
+            }
+ 
+            # GET request
+            response = requests.get(endpoint, params=params)
+ 
+            # Check if request was successful
+            response.raise_for_status()
+ 
+            # Parse JSON response
+            data = response.json()
+ 
+            results = []
+ 
+            # Print data recipe titles
+            for result in data['results']:
+                results.append(result)
+ 
+            # Return webpage
+            return render_template('find_recipe.html', results=results)
+ 
+        except requests.exceptions.HTTPError as err:
+            print('HTTP error occurred:', err)
+            return render_template('error.html', error_message='HTTP error occurred. Please try again later.')
+ 
+        except requests.exceptions.RequestException as err:
+            print('Request error occurred:', err)
+            return render_template('error.html', error_message='Request error occurred. Please try again later.')
+ 
+        except Exception as e:
+            print('An unexpected error occurred:', e)
+            return render_template('error.html', error_message='An unexpected error occurred. Please try again later.')
+ 
     else:
-        print('Error: ', response.status_code)
+        # Handle GET requests (e.g., render form)
+        return render_template('find_recipe.html')
 
-@app.route('/recipe', methods=['GET'])
+@app.route('/recipe', methods=['GET', 'POST'])
 @login_required
 def recipe():
-    # Get recipe id from URL parameter
-    recipeId = request.args.get('id')
+    if request.method == 'GET':
+        # Get recipe id from URL parameter
+        recipeId = request.args.get('id')
 
-    # Endpoint URL
-    endpoint = "https://api.spoonacular.com/recipes/{0}/information".format(recipeId)
+        # Endpoint URL
+        endpoint = "https://api.spoonacular.com/recipes/{0}/information".format(recipeId)
 
-    #  Search paramerters
-    params = {
-        'apiKey': api_key,
-    }
+        #  Search parameters
+        params = {
+            'apiKey': api_key,
+        }
 
-    # GET request
-    response = requests.get(endpoint, params=params)
+        # GET request
+        response = requests.get(endpoint, params=params)
 
-    # Check if request was successful 
-    if response.status_code == 200:
-        # Parse JSON response
-        recipe = response.json()
+        # Check if request was successful 
+        if response.status_code == 200:
+            # Parse JSON response
+            recipe = response.json()
 
-        # Return webpage
-        return render_template('recipe.html', recipe=recipe)
+            # Return webpage
+            return render_template('recipe.html', recipe=recipe)
+        else:
+            print('Error: ', response.status_code)
 
-    else:
-        print('Error: ', response.status_code)
+    elif request.method == 'POST':
+        # Handle POST request logic here if needed
+        pass  # Placeholder, you can add your POST logic here
+
+    # Optionally, handle unauthorized access here
+    return redirect(url_for('login'))  # Redirect unauthenticated users to the login page
+
+    # # Get recipe id from URL parameter
+    # recipeId = request.args.get('id')
+
+    # # Endpoint URL
+    # endpoint = "https://api.spoonacular.com/recipes/{0}/information".format(recipeId)
+
+    # #  Search paramerters
+    # params = {
+    #     'apiKey': api_key,
+    # }
+
+    # # GET request
+    # response = requests.get(endpoint, params=params)
+
+    # # Check if request was successful 
+    # if response.status_code == 200:
+    #     # Parse JSON response
+    #     recipe = response.json()
+
+    #     # Return webpage
+    #     return render_template('recipe.html', recipe=recipe)
+
+    # else:
+    #     print('Error: ', response.status_code)
 
 # User sign up 
 @app.route('/signup', methods=['POST', 'GET'])
@@ -165,7 +209,7 @@ def signup():
                     db.commit()
 
                     # Log in the user after signup
-                    user = User(id=None, name=name, email=email)
+                    user = User(email=email)
                     login_user(user)
                     print('User doesnt exist and has been added to sql table')
 
@@ -217,6 +261,8 @@ def login():
         email = request.form['email']
         password = request.form['password']
 
+        session["email"] = email
+
         # Check if the email exists in the database
         if login_exists(email):
             # Check if the password matches
@@ -229,23 +275,25 @@ def login():
 
                 cursor.close()
                 
-                user = User(id=None, name=name, email=email)
-
+                user = User(email)
                 login_user(user)
-                print("User logged in: ", user.email)
 
-                next_url = session.get('next', None)
-                if next_url:
-                    session.pop('next')
-                    return redirect(next_url)
-                else:
-                    return render_template('dashboard.html')
+                print("User logged in: ", user.id)
+
+                return render_template("dashboard.html")
+
+                # next_url = session.get('next', None)
+                # if next_url:
+                #     session.pop('next')
+                #     return redirect(next_url)
+                # else:
+                #     return render_template('dashboard.html')
             else:
                 error_message = "Incorrect password. Please check your credentials or sign up."
-                return render_template('./login.html', error=error_message)
+                return render_template('login.html', error=error_message)
         else:
             error = 'Invalid email or password. Please try again.'
-            return render_template('./login.html', error=error)
+            return render_template('login.html', error=error)
 
     elif request.method == 'GET':
         return render_template('login.html')
@@ -253,6 +301,9 @@ def login():
 @app.route('/dashboard', methods=['POST', 'GET'])
 @login_required
 def dashboard():
+    print(current_user.is_authenticated)
+    print(current_user.is_active)
+
     print("Current user:", current_user)
     if request.method == 'POST':
         print("Current user:", current_user)
@@ -285,11 +336,11 @@ def settings():
     elif request.method == 'GET':
         return render_template('settings.html')
 
-# @app.route('/logout')
-# @login_required
-# def logout():
-#     logout_user()
-#     return redirect(url_for('index'))
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000, use_reloader=False)
