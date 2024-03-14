@@ -6,15 +6,10 @@
     <title>Gyaldem Recipe Generator</title>
 </head>
 <body>
-    <h1>Results</h1>
-    {% for result in results %}
-    <a href="http://127.0.0.1:5000/recipe?id={{ result['id']  }}">
-        <div>
-            <h3>{{ result['title'] }}</h2>
-            <img src="{{ result['image'] }}">
-        </div>
-    </a>
-    <hr>
-    {% endfor %}
+    <h1>Enter Your Input: </h1>
+    <form action="http://127.0.0.1:5000/find_recipe" method="post">
+        <input type="text" name="user_input">
+        <button type="submit">Submit</button>
+    </form>
 </body>
 </html>
