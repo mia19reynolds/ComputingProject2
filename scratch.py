@@ -67,6 +67,14 @@ def index():
 
 @app.route('/find_recipe', methods=['GET', 'POST'])
 @login_required
+def find_recipe():
+    if request.method == 'POST':
+        return render_template('find_recipe.html')
+    elif request.method == 'GET':
+        return render_template('find_recipe.html')
+
+@app.route('/recipe_results', methods=['GET', 'POST'])
+@login_required
 def process_form():
     if request.method == 'POST':
         try:
@@ -98,7 +106,7 @@ def process_form():
                 results.append(result)
  
             # Return webpage
-            return render_template('find_recipe.html', results=results)
+            return render_template('recipe_results.html', results=results)
  
         except requests.exceptions.HTTPError as err:
             print('HTTP error occurred:', err)

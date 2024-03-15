@@ -6,13 +6,6 @@
     <title>Gyaldem Recipe Generator</title>
 </head>
 <body>
-    <nav>
-        <a href="http://127.0.0.1:5000/">Home</a>
-        <!-- <a href="http://127.0.0.1:5000/find_recipe">Find Recipe</a> -->
-        <a href="http://127.0.0.1:5000/login">Login</a>
-        <a href="http://127.0.0.1:5000/signup">Signup</a>
-    </nav>
-    
     <h1>{{ recipe.title }}</h1>
     <img src="{{ recipe['image'] }}">
     <p>{{ recipe.summary|safe }}</p>
