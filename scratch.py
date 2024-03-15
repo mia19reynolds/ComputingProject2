@@ -80,7 +80,13 @@ def process_form():
         try:
             user_input = request.form['user_input']
             print('User Input:', user_input)
- 
+
+            activeUser = current_user.id
+
+            cursor = db.cursor()
+            cursor.execute("SELECT intolerances FROM User_data WHERE Email = %s", (activeUser,))
+            intolerances = cursor.fetchone()[0]
+
             # Endpoint URL
             endpoint = 'https://api.spoonacular.com/recipes/complexSearch'
  
@@ -88,6 +94,7 @@ def process_form():
             params = {
                 'apiKey': api_key,
                 'query': user_input,  # User written input (natural language)
+                'intolerances': intolerances 
             }
  
             # GET request
@@ -345,10 +352,10 @@ def settings():
         intolerancesString = ','.join(intolerances)
         print(intolerancesString)
         cursor = db.cursor()
-        cursor.execute("UPDATE Userdata SET intolerances = %s WHERE Email = %s", (intolerancesString, email))
+        cursor.execute("UPDATE User_data SET intolerances = %s WHERE Email = %s", (intolerancesString, activeUser))
         db.commit()
         cursor.close()
-        return render_template('settings.html')
+        return "Settings Applied"
     elif request.method == 'GET':
         return render_template('settings.html')
 
