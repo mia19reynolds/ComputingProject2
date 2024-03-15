@@ -187,8 +187,8 @@ def recipe():
 # User sign up 
 @app.route('/signup', methods=['POST', 'GET'])
 def signup():
-    activeUser = current_user.id
-    print("Active User: ", activeUser)
+    # activeUser = current_user.id
+    # print("Active User: ", activeUser)
     print('route accessed')
     if request.method == 'POST':
         print('form submitted')
@@ -207,9 +207,6 @@ def signup():
                 existing_user = cursor.fetchone()
 
                 if existing_user:
-                    # If user already exists, compare passwords
-                    # login_message = "User with this email already exists. Would you like to <a href='/login'>login</a>?"
-                    # return login_message
                     print('User Exists')
                     return render_template('signup.html', error="User with this email already exists. Would you like to <a href='/login'>login</a>?")
 
@@ -266,8 +263,6 @@ def check_password(email, password):
 # New routes for authentication
 @app.route('/login', methods=['POST', 'GET'])
 def login():
-    activeUser = current_user.id
-    print("Active User: ", activeUser)
     error = None
     if request.method == 'POST':
         email = request.form['email']
@@ -294,12 +289,6 @@ def login():
 
                 return render_template("dashboard.html")
 
-                # next_url = session.get('next', None)
-                # if next_url:
-                #     session.pop('next')
-                #     return redirect(next_url)
-                # else:
-                #     return render_template('dashboard.html')
             else:
                 error_message = "Incorrect password. Please check your credentials or sign up."
                 return render_template('login.html', error=error_message)
@@ -328,8 +317,7 @@ def dashboard():
 
 @app.route('/faqs', methods=['GET', 'POST'])
 def faqs():
-    activeUser = current_user.id
-    print("Active User: ", activeUser)
+
     if request.method == 'POST':
         return render_template('faqs.html')
     elif request.method == 'GET':
