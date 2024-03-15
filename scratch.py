@@ -187,6 +187,8 @@ def recipe():
 # User sign up 
 @app.route('/signup', methods=['POST', 'GET'])
 def signup():
+    activeUser = current_user.id
+    print("Active User: ", activeUser)
     print('route accessed')
     if request.method == 'POST':
         print('form submitted')
@@ -264,6 +266,8 @@ def check_password(email, password):
 # New routes for authentication
 @app.route('/login', methods=['POST', 'GET'])
 def login():
+    activeUser = current_user.id
+    print("Active User: ", activeUser)
     error = None
     if request.method == 'POST':
         email = request.form['email']
@@ -309,6 +313,8 @@ def login():
 @app.route('/dashboard', methods=['POST', 'GET'])
 @login_required
 def dashboard():
+    activeUser = current_user.id
+    print("Active User: ", activeUser)
     print(current_user.is_authenticated)
     print(current_user.is_active)
 
@@ -322,6 +328,8 @@ def dashboard():
 
 @app.route('/faqs', methods=['GET', 'POST'])
 def faqs():
+    activeUser = current_user.id
+    print("Active User: ", activeUser)
     if request.method == 'POST':
         return render_template('faqs.html')
     elif request.method == 'GET':
@@ -330,6 +338,8 @@ def faqs():
 @app.route('/account', methods=['GET', 'POST'])
 @login_required
 def account():
+    activeUser = current_user.id
+    print("Active User: ", activeUser)
     if request.method == 'POST':
         return render_template('account.html')
     elif request.method == 'GET':
@@ -339,6 +349,8 @@ def account():
 @app.route('/settings', methods=['GET', 'POST'])
 @login_required
 def settings():
+    activeUser = current_user.id
+    print("Active User: ", activeUser)
     if request.method == 'POST':
         return render_template('settings.html')
     elif request.method == 'GET':
@@ -347,6 +359,8 @@ def settings():
 @app.route('/logout')
 @login_required
 def logout():
+    activeUser = current_user.id
+    print("Active User: ", activeUser)
     logout_user()
     return redirect(url_for('index'))
 
