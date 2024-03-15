@@ -340,6 +340,14 @@ def settings():
     activeUser = current_user.id
     print("Active User: ", activeUser)
     if request.method == 'POST':
+        print('Settings form submitted')
+        intolerances = request.form.getlist('checkbox')
+        intolerancesString = ','.join(intolerances)
+        print(intolerancesString)
+        cursor = db.cursor()
+        cursor.execute("UPDATE Userdata SET intolerances = %s WHERE Email = %s", (intolerancesString, email))
+        db.commit()
+        cursor.close()
         return render_template('settings.html')
     elif request.method == 'GET':
         return render_template('settings.html')
