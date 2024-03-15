@@ -287,7 +287,7 @@ def login():
 
                 print("User logged in: ", user.id)
 
-                return render_template("dashboard.html")
+                return redirect(url_for('dashboard'))
 
             else:
                 error_message = "Incorrect password. Please check your credentials or sign up."
