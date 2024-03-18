@@ -47,10 +47,7 @@ class User(UserMixin):
 @login_manager.user_loader
 def load_user(email):
     # Load user from database by name (treated as if it were the id)
-    print("Loading user:", email)
-    cursor = db.cursor()
-    cursor.execute("SELECT name, email FROM Users WHERE email = %s", (email,))
-    user_data = cursor.fetchone()
+    user_data = readDatabase('*','Users', 'email', email)
     if user_data:
         user = User(email)
         print("User loaded:", user)  # Add this line for debuggings
@@ -79,13 +76,10 @@ def process_form():
     if request.method == 'POST':
         try:
             user_input = request.form['user_input']
-            print('User Input:', user_input)
 
             activeUser = current_user.id
 
-            cursor = db.cursor()
-            cursor.execute("SELECT intolerances FROM User_data WHERE Email = %s", (activeUser,))
-            intolerances = cursor.fetchone()[0]
+            intolerances = readDatabase("intolerances", "User_data", "Email", "antonyvidler@gmail.com")
 
             # Endpoint URL
             endpoint = 'https://api.spoonacular.com/recipes/complexSearch'
@@ -115,13 +109,13 @@ def process_form():
             # Return webpage
             return render_template('recipe_results.html', results=results)
  
-        except requests.exceptions.HTTPError as err:
-            print('HTTP error occurred:', err)
-            return render_template('error.html', error_message='HTTP error occurred. Please try again later.')
+        # except requests.exceptions.HTTPError as err:
+        #     print('HTTP error occurred:', err)
+        #     return render_template('error.html', error_message='HTTP error occurred. Please try again later.')
  
-        except requests.exceptions.RequestException as err:
-            print('Request error occurred:', err)
-            return render_template('error.html', error_message='Request error occurred. Please try again later.')
+        # except requests.exceptions.RequestException as err:
+        #     print('Request error occurred:', err)
+        #     return render_template('error.html', error_message='Request error occurred. Please try again later.')
  
         except Exception as e:
             print('An unexpected error occurred:', e)
@@ -200,28 +194,26 @@ def signup():
     if request.method == 'POST':
         print('form submitted')
         name = request.form['username']
-        email = request.form['email']
+        email = request.form['email'].lower()
         password = request.form['password']
         confirm_password = request.form['confirmPassword']
         print(f"Form data: name={name}, email={email}, password={password}, confirm_password={confirm_password}")
 
         if password == confirm_password:
             print('Passwords match')
-            cursor = db.cursor()
             try:
                 # Check if user already exists (email)
-                cursor.execute("SELECT * FROM Users WHERE LOWER(email) = LOWER(%s)", (email,))
-                existing_user = cursor.fetchone()
-
+                existing_user = readDatabase('*', 'Users', 'LOWER(Email)', email)
                 if existing_user:
                     print('User Exists')
                     return render_template('signup.html', error="User with this email already exists. Would you like to <a href='/login'>login</a>?")
 
                 else:
                     hashed_password = generate_password_hash(password).decode('utf-8')
+                    cursor = db.cursor()
                     cursor.execute("INSERT INTO Users (name, email, password) VALUES (%s, %s, %s)", (name, email, hashed_password))
                     db.commit()
-
+                    cursor.close()
                     # Log in the user after signup
                     user = User(email=email)
                     login_user(user)
@@ -233,8 +225,6 @@ def signup():
                 print('gone in the except', e)
                 # Handle database errors or any other exceptions
                 return render_template('signup.html', error="An error occurred during signup. Please try again later.")
-            finally:
-                cursor.close()
         else:
             print('Passwords dont match')
             return render_template('signup.html', error="Passwords do not match. Please try again.")
@@ -246,23 +236,22 @@ def signup():
 def login_exists(email):
     cursor = db.cursor()
     try:
-        cursor.execute("SELECT COUNT(*) FROM Users WHERE email = %s", (email,))
-        count = cursor.fetchone()[0]
-        return count > 0
+        count = readDatabase('COUNT(*)', 'Users', 'email', email)
+        return count[0] > 0
     finally:
         cursor.close()
 
 def check_password(email, password):
-    cursor = db.cursor()
+    # cursor = db.cursor()
     try:
-        cursor.execute("SELECT password FROM Users WHERE email = %s", (email,))
-        hashed_password = cursor.fetchone()
+        hashed_password = readDatabase('password', 'Users', 'email', email)
         
         if hashed_password:
             hashed_password_str = hashed_password[0]  # Convert bytes to string
             return check_password_hash(hashed_password_str, password)
-    finally:
-        cursor.close()
+    except Exception as e:
+        print(e)
+        return e
     
     return False
 
@@ -282,12 +271,7 @@ def login():
             # Check if the password matches
             if check_password(email, password):
                 # Retreive user information
-
-                cursor = db.cursor()
-                cursor.execute("SELECT name FROM Users WHERE email = %s", (email,))
-                name = cursor.fetchone()[0]
-
-                cursor.close()
+                name = readDatabase('name', 'Users', 'email', email)
                 
                 user = User(email)
                 login_user(user)
@@ -358,6 +342,30 @@ def settings():
         return "Settings Applied"
     elif request.method == 'GET':
         return render_template('settings.html')
+    
+def readDatabase(reqCol, table, column, value):
+    print('read:', reqCol, table, column, value)
+    try:
+        query = 'SELECT {} FROM {} WHERE {} = %s'.format(reqCol, table, column)
+        cursor = db.cursor()
+        cursor.execute(query, (value,))
+        result = cursor.fetchone()
+        cursor.close()
+        return result
+    except Exception as e:
+        print('read database error:', e)
+
+def writeDatabase(table, columns, values):
+    try:
+        query = 'INSERT INTO {} ({}) VALUES ({})'.format(table, columns, values)
+        print('write:', query)
+        cursor = db.cursor()
+        cursor.execute(query)
+        result = cursor.fetchone()
+        cursor.close()
+        return result
+    except Exception as e:
+        print('write database error:', e)
 
 @app.route('/logout')
 @login_required
