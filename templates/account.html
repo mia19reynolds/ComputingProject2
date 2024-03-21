@@ -1,19 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Account</title>
-</head>
-<body>
-    <nav>
-        <a href="http://127.0.0.1:5000/">Home</a>
-        <a href="http://127.0.0.1:5000/find_recipe">Find a Recipe</a>
-        <a href="http://127.0.0.1:5000/account">Account</a>
-        <a href="http://127.0.0.1:5000/settings">Settings</a>
-    </nav>
+{% extends "/base.html" %}
+{% block title %}Account{% endblock %}
+{% include 'navbarActive.html' %}
+{% block main %}
     <h2>Account</h2>
-    <p>This will be user account information like allergies and saved recipes?
-    </p>
-</body>
-</html>
+    <p>This will be user account information like allergies and saved recipes?</p>
+{% endblock %}

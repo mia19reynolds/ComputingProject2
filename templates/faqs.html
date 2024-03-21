@@ -1,20 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <nav>
-        <a href="http://127.0.0.1:5000/">Overview</a>
-        <!-- <a href="http://127.0.0.1:5000/find_recipe">Find Recipe</a> -->
-        <a href="http://127.0.0.1:5000/faqs">FAQs</a>
-        <a href="http://127.0.0.1:5000/login">Login</a>
-        <a href="http://127.0.0.1:5000/signup">Signup</a>
-    </nav>
-
+{% extends "/base.html" %}
+{% block title %}FAQs{% endblock %}
+{% include 'navbar.html' %}
+{% block main %}
     <h2>FAQs</h2>
     <p>This needs to be filled with FAQs</p>
-</body>
-</html>
+{% endblock %}

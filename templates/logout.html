@@ -1,14 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Logout</title>
-</head>
-<body>
-
+{% extends "/base.html" %}
+{% block title %}Logout{% endblock %}
+{% include 'navbarActive.html' %}
+{% block main %}
     <h2>Logout</h2>
-    
     {% if current_user.is_authenticated %}
         <p>Are you sure you want to logout, {{ current_user.name }}?</p>
         <form method="post" action="{{ url_for('logout') }}">
@@ -17,6 +11,4 @@
     {% else %}
         <p>You are not logged in. Please <a href="{{ url_for('login') }}">login</a>.</p>
     {% endif %}
-
-</body>
-</html>
+{% endblock %}

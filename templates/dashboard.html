@@ -1,21 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
-</head>
-<body>
-    <nav>
-        <a href="http://127.0.0.1:5000/dashboard">Home</a>
-        <a href="http://127.0.0.1:5000/find_recipe">Find a Recipe</a>
-        <a href="http://127.0.0.1:5000/account">Account</a>
-        <a href="http://127.0.0.1:5000/settings">Settings</a>
-    </nav>
-
+{% extends "/base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% include 'navbarActive.html' %}
+{% block main %}
     <h2>Dashboard</h2>
     <p>Welcome message needs to show up here with the users name</p>
     <p>Think of some other icons and links for this page</p>
-
-</body>
-</html>
+{% endblock %}
