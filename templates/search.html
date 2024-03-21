@@ -4,10 +4,10 @@
 {% block main %}
     <div class="center">
         <h1>Search Recipe</h1>
-        <form action="http://127.0.0.1:5000/recipe_results" method="post">
-            <input type="text" name="query">
+        <form action="http://127.0.0.1:5000/search" method="post">
+            <input type="text" name="query" value="{{ query }}">
             <select name="cuisine">
-                <option value="" selected>Cuisine</option>
+                <option value="{{ cuisine }}" selected>{{ cuisine }}</option>
                 {% for cuisine in cuisines: %}
                 <option value= {{ cuisine }} >{{ cuisine }}</option>
                 {% endfor %}

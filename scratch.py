@@ -64,9 +64,9 @@ def index():
     #     return redirect("/")
     return render_template('index.html')
 
-@app.route('/find_recipe', methods=['GET', 'POST'])
+@app.route('/search', methods=['GET', 'POST'])
 @login_required
-def find_recipe():
+def search():
     cuisines = [
         'African',
         'Asian',
@@ -97,65 +97,55 @@ def find_recipe():
         'Vietnamese'
     ]
     if request.method == 'POST':
-        return render_template('find_recipe.html', cuisines=cuisines)
-    elif request.method == 'GET':
-        return render_template('find_recipe.html', cuisines=cuisines)
+        activeUser = current_user.id
+        intolerances = readDatabase("intolerances", "User_data", "Email", activeUser)
+        query = request.form['query']
+        cuisine = request.form['cuisine']
+        return redirect(url_for('search', query=query, cuisine=cuisine))
+ 
+    else:
+        # Handle GET requests (e.g., render form)
 
-@app.route('/recipe_results', methods=['GET', 'POST'])
-@login_required
-def find_recipes():
-    if request.method == 'POST':
         try:
-            activeUser = current_user.id
 
-            query = request.form['query']
-            cuisine = request.form['cuisine']
+            activeUser = current_user.id
             intolerances = readDatabase("intolerances", "User_data", "Email", activeUser)
+            query = request.args.get('query')
+            cuisine = request.args.get('cuisine')
 
             # Endpoint URL
             endpoint = 'https://api.spoonacular.com/recipes/complexSearch'
- 
+
             # Search parameters
             params = {
                 'apiKey': api_key,
                 'query': query,  # User written input (natural language)
                 'cuisine': cuisine,
-                'intolerances': intolerances 
+                'intolerances': intolerances
             }
- 
+
+            print(params)
             # GET request
             response = requests.get(endpoint, params=params)
- 
+
             # Check if request was successful
             response.raise_for_status()
- 
+
             # Parse JSON response
             data = response.json()
- 
+
             results = []
- 
+
             # Print data recipe titles
             for result in data['results']:
                 results.append(result)
- 
+
             # Return webpage
-            return render_template('search.html', results=results)
- 
-        # except requests.exceptions.HTTPError as err:
-        #     print('HTTP error occurred:', err)
-        #     return render_template('error.html', error_message='HTTP error occurred. Please try again later.')
- 
-        # except requests.exceptions.RequestException as err:
-        #     print('Request error occurred:', err)
-        #     return render_template('error.html', error_message='Request error occurred. Please try again later.')
- 
+            return render_template('search.html', cuisine=cuisine, results=results, query=query, cuisines=cuisines)
+        
         except Exception as e:
             print('An unexpected error occurred:', e)
             return render_template('error.html', error_message='An unexpected error occurred. Please try again later.')
- 
-    else:
-        # Handle GET requests (e.g., render form)
-        return render_template('find_recipe.html')
 
 @app.route('/recipe', methods=['GET', 'POST'])
 @login_required
