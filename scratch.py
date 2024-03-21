@@ -18,7 +18,7 @@ app.secret_key = '123AMM'
 # app.config['SESSION_COOKIE_HTTPONLY'] = True  # Prevent JavaScript access to session cookies
 
 #API key
-api_key = "653ac8f884cb4c99bdd950abd9d769c9"
+api_key = "b1950d16d34842d6be06bca4c29ea1fb"
 
 HOST = "igor.gold.ac.uk"
 DATABASE = "avidl002_Project"
@@ -145,7 +145,7 @@ def search():
         
         except Exception as e:
             print('An unexpected error occurred:', e)
-            return render_template('error.html', error_message='An unexpected error occurred. Please try again later.')
+            return render_template('search.html')
 
 @app.route('/recipe', methods=['GET', 'POST'])
 @login_required
