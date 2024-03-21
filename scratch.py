@@ -41,15 +41,17 @@ login_manager.init_app(app)
 
 # Define a simple User class for Flask-Login
 class User(UserMixin):
-    def __init__(self, email):
+    def __init__(self, email, name):
         self.id = email
+        self.name = name
 
 @login_manager.user_loader
 def load_user(email):
     # Load user from database by name (treated as if it were the id)
     user_data = readDatabase('*','Users', 'email', email)
     if user_data:
-        user = User(email)
+        name = user_data[0]
+        user = User(email, name)
         print("User loaded:", user)  # Add this line for debuggings
         return user
     else:
@@ -65,21 +67,50 @@ def index():
 @app.route('/find_recipe', methods=['GET', 'POST'])
 @login_required
 def find_recipe():
+    cuisines = [
+        'African',
+        'Asian',
+        'American',
+        'British',
+        'Cajun',
+        'Caribbean',
+        'Chinese',
+        'Eastern European',
+        'European',
+        'French',
+        'German',
+        'Greek',
+        'Indian',
+        'Irish',
+        'Italian',
+        'Japanese',
+        'Jewish',
+        'Korean',
+        'Latin American',
+        'Mediterranean',
+        'Mexican',
+        'Middle Eastern',
+        'Nordic',
+        'Southern',
+        'Spanish',
+        'Thai',
+        'Vietnamese'
+    ]
     if request.method == 'POST':
-        return render_template('find_recipe.html')
+        return render_template('find_recipe.html', cuisines=cuisines)
     elif request.method == 'GET':
-        return render_template('find_recipe.html')
+        return render_template('find_recipe.html', cuisines=cuisines)
 
 @app.route('/recipe_results', methods=['GET', 'POST'])
 @login_required
-def process_form():
+def find_recipes():
     if request.method == 'POST':
         try:
-            user_input = request.form['user_input']
-
             activeUser = current_user.id
 
-            intolerances = readDatabase("intolerances", "User_data", "Email", "antonyvidler@gmail.com")
+            query = request.form['query']
+            cuisine = request.form['cuisine']
+            intolerances = readDatabase("intolerances", "User_data", "Email", activeUser)
 
             # Endpoint URL
             endpoint = 'https://api.spoonacular.com/recipes/complexSearch'
@@ -87,7 +118,8 @@ def process_form():
             # Search parameters
             params = {
                 'apiKey': api_key,
-                'query': user_input,  # User written input (natural language)
+                'query': query,  # User written input (natural language)
+                'cuisine': cuisine,
                 'intolerances': intolerances 
             }
  
@@ -107,7 +139,7 @@ def process_form():
                 results.append(result)
  
             # Return webpage
-            return render_template('recipe_results.html', results=results)
+            return render_template('search.html', results=results)
  
         # except requests.exceptions.HTTPError as err:
         #     print('HTTP error occurred:', err)
@@ -215,7 +247,7 @@ def signup():
                     db.commit()
                     cursor.close()
                     # Log in the user after signup
-                    user = User(email=email)
+                    user = User(email=email, name=name)
                     login_user(user)
                     print('User doesnt exist and has been added to sql table')
 
@@ -237,7 +269,9 @@ def login_exists(email):
     cursor = db.cursor()
     try:
         count = readDatabase('COUNT(*)', 'Users', 'email', email)
-        return count[0] > 0
+        if count:
+            return True
+        else: return False
     finally:
         cursor.close()
 
@@ -273,7 +307,7 @@ def login():
                 # Retreive user information
                 name = readDatabase('name', 'Users', 'email', email)
                 
-                user = User(email)
+                user = User(email=email, name=name)
                 login_user(user)
 
                 print("User logged in: ", user.id)
@@ -288,7 +322,10 @@ def login():
             return render_template('login.html', error=error)
 
     elif request.method == 'GET':
-        return render_template('login.html')
+        if current_user.is_authenticated:
+            return redirect(url_for('dashboard'))
+        else:
+            return render_template('login.html')
         
 @app.route('/dashboard', methods=['POST', 'GET'])
 @login_required
@@ -367,13 +404,14 @@ def writeDatabase(table, columns, values):
     except Exception as e:
         print('write database error:', e)
 
-@app.route('/logout')
+@app.route('/logout', methods=['POST', 'GET'])
 @login_required
 def logout():
-    activeUser = current_user.id
-    print("Active User: ", activeUser)
-    logout_user()
-    return redirect(url_for('index'))
+    if request.method == 'POST':
+        logout_user()
+        return redirect(url_for('index'))
+    else:
+        return render_template('logout.html')
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000, use_reloader=False)
