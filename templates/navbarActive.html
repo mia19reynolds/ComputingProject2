@@ -1,6 +1,6 @@
 <nav id="navbar" class="card">   
     <a href="{{ url_for('dashboard') }}">Home</a>
-    <a href="{{ url_for('search?query=&cuisine=') }}">Find a Recipe</a>
+    <a href="{{ url_for('search', query='', cuisine='') }}">Find a Recipe</a>
     <a href="{{ url_for('account') }}">Account</a>
     <a href="{{ url_for('settings') }}">Settings</a>
     <a href="{{ url_for('logout') }}">Logout</a>
