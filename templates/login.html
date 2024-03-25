@@ -8,7 +8,7 @@
         {{ error }}
     </div>
     {% endif %}
-    <form method="post" action="http://127.0.0.1:5000/login">
+    <form method="post" action="{{ url_for('login') }}">
         <label for="email">Email:</label>
         <input type="email" id="email" name="email" required>
         <br>
@@ -19,5 +19,5 @@
     </form>
     <br>
     
-    <p>Don't have an account? <a href="http://127.0.0.1:5000/signup">Signup</a></p>
+    <p>Don't have an account? <a href="{{ url_for('signup') }}">Signup</a></p>
 {% endblock %}

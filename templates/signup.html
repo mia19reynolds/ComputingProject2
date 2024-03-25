@@ -9,7 +9,7 @@
     </div>
     {% endif %}
 
-    <form method="post" action="http://127.0.0.1:5000/signup">
+    <form method="post" action="{{ url_for('signup') }}">
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" required>
         <br>
@@ -25,5 +25,5 @@
         <button type="submit">Signup</button>
     </form>
 
-    <p>Already have an account? <a href="http://127.0.0.1:5000/login">Login here</a></p>
+    <p>Already have an account? <a href="{{ url_for('login') }}">Login here</a></p>
 {% endblock %}

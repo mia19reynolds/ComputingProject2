@@ -5,7 +5,7 @@
     <h2>Settings</h2>
     <p>This will need be filled with options like delete account and logout</p>
     <h3>Intolerances</h3>
-    <form method="post" action="http://127.0.0.1:5000/settings">
+    <form method="post" action="{{ url_for('settings') }}">
         <label for="dairy">Dairy</label>
         <input type="checkbox" value="dairy" name="checkbox">
         <br>
