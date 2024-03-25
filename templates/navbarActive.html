@@ -1,7 +1,7 @@
 <nav id="navbar" class="card">   
-    <a href="http://0.0.0.0/dashboard">Home</a>
-    <a href="http://0.0.0.0/search?query=&cuisine=">Find a Recipe</a>
-    <a href="http://0.0.0.0/account">Account</a>
-    <a href="http://0.0.0.0/settings">Settings</a>
-    <a href="http://0.0.0.0/logout">Logout</a>
+    <a href="{{ url_for('dashboard') }}">Home</a>
+    <a href="{{ url_for('search?query=&cuisine=') }}">Find a Recipe</a>
+    <a href="{{ url_for('account') }}">Account</a>
+    <a href="{{ url_for('settings') }}">Settings</a>
+    <a href="{{ url_for('logout') }}">Logout</a>
 </nav>

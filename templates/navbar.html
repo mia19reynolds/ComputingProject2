@@ -1,6 +1,6 @@
 <nav id="navbar" class="card">
-    <a href="http://0.0.0.0/">Overview</a>
-    <a href="http://0.0.0.0/faqs">FAQs</a>
-    <a href="http://0.0.0.0/login">Login</a>
-    <a href="http://0.0.0.0/signup">Signup</a>
+    <a href="{{ url_for('/')}}">Overview</a>
+    <a href="{{ url_for('/faq') }}">FAQs</a>
+    <a href="{{ url_for('/login') }}">Login</a>
+    <a href="{{ url_for('/signup') }}">Signup</a>
 </nav>
