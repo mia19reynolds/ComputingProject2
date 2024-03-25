@@ -48,12 +48,18 @@ class User(UserMixin):
 @login_manager.user_loader
 def load_user(email):
     # Load user from database by name (treated as if it were the id)
-    user_data = readDatabase('*','Users', 'email', email)
-    if user_data:
-        name = user_data[0]
-        user = User(email, name)
-        print("User loaded:", user)  # Add this line for debuggings
-        return user
+    try:
+
+        user_data = readDatabase('*','Users', 'email', email)
+        if user_data:
+            name = user_data[0]
+            user = User(email, name)
+            print("User loaded:", user)  # Add this line for debuggings
+            return user
+    except Exception as e:
+        print("NOOOO", e)
+        return None
+   
     else:
         print("User not found") 
         return None
@@ -96,11 +102,14 @@ def search():
         'Thai',
         'Vietnamese'
     ]
+    
     if request.method == 'POST':
         activeUser = current_user.id
         intolerances = readDatabase("intolerances", "User_data", "Email", activeUser)
         query = request.form['query']
-        cuisine = request.form['cuisine']
+        ugh = request.form.getlist('checkbox')
+        cuisine = ','.join(ugh)
+        print('cuisine:',cuisine)
         return redirect(url_for('search', query=query, cuisine=cuisine))
  
     else:
