@@ -1,5 +1,5 @@
 # requirements.txt
-mysql == 8.0.28
+# mysql == 8.0.28
 bcrypt == 4.1.2
 Flask == 3.0.2
 Flask-bcrypt == 1.0.1
