@@ -1,0 +1,8 @@
+<div id="list1" class="dropdown" tabindex="100">
+    <span class="anchor">{{ title }}</span>
+    <ul class="items">
+        {% for item in items %}
+        <li><input type="checkbox" value="{{ item }}">{{ item }}</li>
+        {% endfor %}
+    </ul>
+</div>

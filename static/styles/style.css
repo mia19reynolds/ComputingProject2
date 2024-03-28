@@ -38,7 +38,59 @@ nav a{
 nav a:hover{
     background-color:rgb(210, 193, 110);
 }
-input{
+#searchBar{
     width: 100%;
     padding: 10px;
+}
+
+.dropdown {
+    display: inline-block;
+}
+
+.dropdown .anchor {
+    position: relative;
+    cursor: pointer;
+    display: inline-block;
+    padding: 5px 50px 5px 10px;
+    border: 1px solid #ccc;
+}
+
+.dropdown .anchor:after {
+    position: absolute;
+    content: "";
+    border-left: 2px solid black;
+    border-top: 2px solid black;
+    padding: 5px;
+    right: 10px;
+    top: 20%;
+    -moz-transform: rotate(-135deg);
+    -ms-transform: rotate(-135deg);
+    -o-transform: rotate(-135deg);
+    -webkit-transform: rotate(-135deg);
+    transform: rotate(-135deg);
+}
+
+.dropdown .anchor:active:after {
+    right: 8px;
+    top: 21%;
+}
+
+.dropdown ul.items {
+    padding: 2px;
+    display: none;
+    margin: 0;
+    border: 1px solid #ccc;
+    border-top: none;
+}
+
+.dropdown ul.items li {
+    list-style: none;
+}
+
+.dropdown.visible .anchor {
+    color: #0094ff;
+}
+
+.dropdown.visible .items {
+    display: block;
 }
