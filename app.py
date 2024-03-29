@@ -22,8 +22,8 @@ api_key = "b1950d16d34842d6be06bca4c29ea1fb"
 
 HOST = "localhost"
 DATABASE = "Gyaldem"
-USER = "root"
-PASSWORD = ""
+USER = "app"
+PASSWORD = "amm123"
 
 db = mysql.connect(
     host=HOST,
