@@ -39,9 +39,9 @@ login_manager.init_app(app)
 
 # Define a simple User class for Flask-Login
 class User(UserMixin):
-    def __init__(self, email, name):
+    def __init__(self, email, forename):
         self.id = email
-        self.name = name
+        self.forename = forename
 
 @login_manager.user_loader
 def load_user(email):
@@ -50,8 +50,8 @@ def load_user(email):
 
         user_data = readDatabase('*','users', 'email', email)
         if user_data:
-            name = user_data[0]
-            user = User(email, name)
+            forename = user_data[0]
+            user = User(email, forename)
             print("User loaded:", user)  # Add this line for debuggings
             return user
     except Exception as e:
@@ -222,11 +222,11 @@ def signup():
     print('route accessed')
     if request.method == 'POST':
         print('form submitted')
-        name = request.form['username']
+        forename = request.form['forename']
+        lastname = request.form['lastname']
         email = request.form['email'].lower()
         password = request.form['password']
         confirm_password = request.form['confirmPassword']
-        print(f"Form data: name={name}, email={email}, password={password}, confirm_password={confirm_password}")
 
         if password == confirm_password:
             print('Passwords match')
@@ -240,11 +240,11 @@ def signup():
                 else:
                     hashed_password = generate_password_hash(password).decode('utf-8')
                     cursor = db.cursor()
-                    cursor.execute("INSERT INTO users (name, email, password) VALUES (%s, %s, %s)", (name, email, hashed_password))
+                    cursor.execute("INSERT INTO users (forename, lastname, email, password) VALUES (%s, %s, %s, %s)", (forename, lastname, email, hashed_password))
                     db.commit()
                     cursor.close()
                     # Log in the user after signup
-                    user = User(email=email, name=name)
+                    user = User(email=email, forename=forename)
                     login_user(user)
                     print('User doesnt exist and has been added to sql table')
 
@@ -302,9 +302,9 @@ def login():
             # Check if the password matches
             if check_password(email, password):
                 # Retreive user information
-                name = readDatabase('name', 'users', 'email', email)
+                forename = readDatabase('forename', 'users', 'email', email)
                 
-                user = User(email=email, name=name)
+                user = User(email=email, forename=forename)
                 login_user(user)
 
                 print("User logged in: ", user.id)
