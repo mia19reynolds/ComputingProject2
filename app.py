@@ -20,18 +20,16 @@ app.secret_key = '123AMM'
 #API key
 api_key = "b1950d16d34842d6be06bca4c29ea1fb"
 
-HOST = "igor.gold.ac.uk"
-DATABASE = "avidl002_Project"
-USER = "avidl002"
-PASSWORD = "asdf"
-PORT = 3307
+HOST = "localhost"
+DATABASE = "Gyaldem"
+USER = "root"
+PASSWORD = ""
 
 db = mysql.connect(
     host=HOST,
     database=DATABASE,
     user=USER,
-    password=PASSWORD,
-    port=PORT
+    password=PASSWORD
 )
 
 login_manager = LoginManager()
@@ -50,7 +48,7 @@ def load_user(email):
     # Load user from database by name (treated as if it were the id)
     try:
 
-        user_data = readDatabase('*','Users', 'email', email)
+        user_data = readDatabase('*','users', 'email', email)
         if user_data:
             name = user_data[0]
             user = User(email, name)
@@ -105,7 +103,7 @@ def search():
     
     if request.method == 'POST':
         activeUser = current_user.id
-        intolerances = readDatabase("intolerances", "User_data", "Email", activeUser)
+        intolerances = readDatabase("intolerances", "user_data", "email", activeUser)
         query = request.form['query']
         ugh = request.form.getlist('checkbox')
         cuisine = ','.join(ugh)
@@ -118,7 +116,7 @@ def search():
         try:
 
             activeUser = current_user.id
-            intolerances = readDatabase("intolerances", "User_data", "Email", activeUser)
+            intolerances = readDatabase("intolerances", "user_data", "email", activeUser)
             query = request.args.get('query')
             cuisine = request.args.get('cuisine')
 
@@ -234,7 +232,7 @@ def signup():
             print('Passwords match')
             try:
                 # Check if user already exists (email)
-                existing_user = readDatabase('*', 'Users', 'LOWER(Email)', email)
+                existing_user = readDatabase('*', 'users', 'LOWER(email)', email)
                 if existing_user:
                     print('User Exists')
                     return render_template('signup.html', error="User with this email already exists. Would you like to <a href='/login'>login</a>?")
@@ -242,7 +240,7 @@ def signup():
                 else:
                     hashed_password = generate_password_hash(password).decode('utf-8')
                     cursor = db.cursor()
-                    cursor.execute("INSERT INTO Users (name, email, password) VALUES (%s, %s, %s)", (name, email, hashed_password))
+                    cursor.execute("INSERT INTO users (name, email, password) VALUES (%s, %s, %s)", (name, email, hashed_password))
                     db.commit()
                     cursor.close()
                     # Log in the user after signup
@@ -267,7 +265,7 @@ def signup():
 def login_exists(email):
     cursor = db.cursor()
     try:
-        count = readDatabase('COUNT(*)', 'Users', 'email', email)
+        count = readDatabase('COUNT(*)', 'users', 'email', email)
         if count:
             return True
         else: return False
@@ -277,7 +275,7 @@ def login_exists(email):
 def check_password(email, password):
     # cursor = db.cursor()
     try:
-        hashed_password = readDatabase('password', 'Users', 'email', email)
+        hashed_password = readDatabase('password', 'users', 'email', email)
         
         if hashed_password:
             hashed_password_str = hashed_password[0]  # Convert bytes to string
@@ -304,7 +302,7 @@ def login():
             # Check if the password matches
             if check_password(email, password):
                 # Retreive user information
-                name = readDatabase('name', 'Users', 'email', email)
+                name = readDatabase('name', 'users', 'email', email)
                 
                 user = User(email=email, name=name)
                 login_user(user)
@@ -372,7 +370,7 @@ def settings():
         intolerancesString = ','.join(intolerances)
         print(intolerancesString)
         cursor = db.cursor()
-        cursor.execute("UPDATE User_data SET intolerances = %s WHERE Email = %s", (intolerancesString, activeUser))
+        cursor.execute("UPDATE user_data SET intolerances = %s WHERE email = %s", (intolerancesString, activeUser))
         db.commit()
         cursor.close()
         return "Settings Applied"
