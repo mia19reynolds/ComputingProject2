@@ -357,10 +357,16 @@ def account():
     elif request.method == 'GET':
         return render_template('account.html')
 
-
 @app.route('/settings', methods=['GET', 'POST'])
 @login_required
 def settings():
+    activeUser = current_user.id
+    print("Active User: ", activeUser)
+    return render_template('settings.html')
+
+@app.route('/settings/intolerances', methods=['GET', 'POST'])
+@login_required
+def settingsIntolerances():
     activeUser = current_user.id
     print("Active User: ", activeUser)
     if request.method == 'POST':
@@ -374,7 +380,7 @@ def settings():
         cursor.close()
         return "Settings Applied"
     elif request.method == 'GET':
-        return render_template('settings.html')
+        return render_template('intolerances.html')
     
 def readDatabase(reqCol, table, column, value):
     print('read:', reqCol, table, column, value)
