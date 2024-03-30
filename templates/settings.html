@@ -6,4 +6,7 @@
     <div id="settingsPages">
         <a href="{{ url_for('settingsIntolerances') }}">Intolerances</a>
     </div>
+    <div id="options">
+        {% block options %}{% endblock %}
+    </div>
 {% endblock %}
