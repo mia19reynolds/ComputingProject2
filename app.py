@@ -377,7 +377,7 @@ def settingsIntolerances():
         cursor.execute("UPDATE user_data SET intolerances = %s WHERE email = %s", (intolerancesString, activeUser))
         db.commit()
         cursor.close()
-        return "Settings Applied"
+        return render_template('intolerances.html', alert='Intolerances updated')
     elif request.method == 'GET':
         return render_template('intolerances.html')
 
