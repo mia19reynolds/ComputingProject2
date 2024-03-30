@@ -2,7 +2,7 @@
     <span class="anchor">{{ title }}</span>
     <ul class="items">
         {% for item in items %}
-        <li><input type="checkbox" value="{{ item }}">{{ item }}</li>
+        <li><input type="checkbox" name="{{ title }}Checklist" value="{{ item }}">{{ item }}</li>
         {% endfor %}
     </ul>
 </div>

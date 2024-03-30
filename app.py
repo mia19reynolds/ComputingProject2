@@ -105,7 +105,7 @@ def search():
         activeUser = current_user.id
         intolerances = readDatabase("intolerances", "user_data", "email", activeUser)
         query = request.form['query']
-        ugh = request.form.getlist('checkbox')
+        ugh = request.form.getlist('cuisineChecklist')
         cuisine = ','.join(ugh)
         print('cuisine:',cuisine)
         return redirect(url_for('search', query=query, cuisine=cuisine))
