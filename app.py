@@ -443,6 +443,7 @@ def readDatabase(reqCol, table, column, value):
         cursor.execute(query, (value,))
         result = cursor.fetchone()
         cursor.close()
+        print('result:',result)
         return result
     except Exception as e:
         print('read database error:', e)
