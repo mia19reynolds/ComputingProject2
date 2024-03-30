@@ -94,3 +94,10 @@ nav a:hover{
 .dropdown.visible .items {
     display: block;
 }
+
+.alert {
+    background-color: rgb(246, 241, 205);
+    width: 100%;
+    border:rgb(119, 93, 45) 5px;
+    padding: 20px;
+}

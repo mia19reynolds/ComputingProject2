@@ -235,7 +235,7 @@ def signup():
                 existing_user = readDatabase('*', 'users', 'LOWER(email)', email)
                 if existing_user:
                     print('User Exists')
-                    return render_template('signup.html', error="User with this email already exists. Would you like to <a href='/login'>login</a>?")
+                    return render_template('signup.html', alert="User with this email already exists. Would you like to <a href='/login'>login</a>?")
 
                 else:
                     hashed_password = generate_password_hash(password).decode('utf-8')
@@ -253,10 +253,10 @@ def signup():
             except Exception as e:
                 print('gone in the except', e)
                 # Handle database errors or any other exceptions
-                return render_template('signup.html', error="An error occurred during signup. Please try again later.")
+                return render_template('signup.html', alert="An error occurred during signup. Please try again later.")
         else:
             print('Passwords dont match')
-            return render_template('signup.html', error="Passwords do not match. Please try again.")
+            return render_template('signup.html', alert="Passwords do not match. Please try again.")
     else:
         return render_template('signup.html')
 
@@ -313,10 +313,10 @@ def login():
 
             else:
                 error_message = "Incorrect password. Please check your credentials or sign up."
-                return render_template('login.html', error=error_message)
+                return render_template('login.html', alert=error_message)
         else:
             error = 'Invalid email or password. Please try again.'
-            return render_template('login.html', error=error)
+            return render_template('login.html', alert=error)
 
     elif request.method == 'GET':
         if current_user.is_authenticated:
@@ -393,7 +393,7 @@ def settingsDiets():
         cursor.execute("UPDATE user_data SET diets = %s WHERE email = %s", (dietsString, activeUser))
         db.commit()
         cursor.close()
-        return "Settings Applied"
+        return render_template('diets.html', alert='Diets updated')
     elif request.method == 'GET':
         return render_template('diets.html')
     
@@ -413,11 +413,11 @@ def settingsResetPassword():
                 cursor.execute("UPDATE users SET password = %s WHERE email = %s", (hashPass, activeUser))
                 db.commit()
                 cursor.close()
-                return render_template('resetPassword.html', error='Password changed')
+                return render_template('resetPassword.html', alert='Password changed')
             else:
-                return render_template('resetPassword.html', error='Passwords do not match')
+                return render_template('resetPassword.html', alert='Passwords do not match')
         else:
-            return render_template('resetPassword.html', error='Incorrect password')
+            return render_template('resetPassword.html', alert='Incorrect password')
     elif request.method == 'GET':
         return render_template('resetPassword.html')
     

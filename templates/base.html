@@ -10,9 +10,9 @@
     {% endblock %}
 </head>
 <body>
-    {% if error %}
-    <div class="alert alert-danger" role="alert">
-        {{ error | safe }}
+    {% if alert %}
+    <div class="alert" role="alert">
+        {{ alert | safe }}
     </div>
     {% endif %}
     <div id="main">
