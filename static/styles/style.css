@@ -97,7 +97,7 @@ nav a:hover{
 
 .alert {
     background-color: rgb(246, 241, 205);
-    width: 100%;
-    border:rgb(119, 93, 45) 5px;
+    border:5px solid rgb(119, 93, 45);
+    color: rgb(119, 93, 45);
     padding: 20px;
 }
