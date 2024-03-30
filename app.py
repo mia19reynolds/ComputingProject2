@@ -408,7 +408,7 @@ def settingsResetPassword():
         newPassConfirm = request.form['newPassConfirm']
         if check_password(activeUser, oldPass):
             if newPass == newPassConfirm:
-                hashPass = generate_password_hash(newPass).decode('uft-8')
+                hashPass = generate_password_hash(newPass).decode('utf-8')
                 cursor = db.cursor()
                 cursor.execute("UPDATE users SET password = %s WHERE email = %s", (hashPass, activeUser))
                 db.commit()
