@@ -400,16 +400,31 @@ def settingsIntolerances():
 @login_required
 def settingsDiets():
     activeUser = current_user.id
+    diets = [
+        'Gluten Free',
+        'Ketogenic',
+        'Vegetarian',
+        'Lacto-Vegetarian',
+        'Ovo-Vegetarian',
+        'Vegan',
+        'Pescetarian',
+        'Paleo',
+        'Primal',
+        'Low FODMAP',
+        'Whole30'
+    ]
     if request.method == 'POST':
-        diets = request.form.getlist('checkbox')
-        dietsString = ','.join(diets)
+        newDiets = request.form.getlist('checkbox')
+        newDietsString = ','.join(newDiets)
         cursor = db.cursor()
-        cursor.execute("UPDATE user_data SET diets = %s WHERE email = %s", (dietsString, activeUser))
+        cursor.execute("UPDATE user_data SET diets = %s WHERE email = %s", (newDietsString, activeUser))
         db.commit()
         cursor.close()
-        return render_template('diets.html', alert='Diets updated')
+        selectedDiets = readDatabase("diets", "user_data", "email", activeUser).split(',')
+        return render_template('diets.html', items=diets, checked=selectedDiets, alert='Diets updated')
     elif request.method == 'GET':
-        return render_template('diets.html')
+        selectedDiets = readDatabase("diets", "user_data", "email", activeUser).split(',')
+        return render_template('diets.html', items=diets, checked=selectedDiets)
     
 @app.route('/settings/password', methods=['GET', 'POST'])
 @login_required
@@ -441,10 +456,10 @@ def readDatabase(reqCol, table, column, value):
         query = 'SELECT {} FROM {} WHERE {} = %s'.format(reqCol, table, column)
         cursor = db.cursor()
         cursor.execute(query, (value,))
-        result = cursor.fetchone()
+        result = cursor.fetchone()[0]
         cursor.close()
         print('result:',result)
-        return result[0]
+        return result
     except Exception as e:
         print('read database error:', e)
 

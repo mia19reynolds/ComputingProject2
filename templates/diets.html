@@ -2,39 +2,15 @@
 {% block options %}
     <h3>Diets</h3>
     <form method="post" action="{{ url_for('settingsDiets') }}">
-        <label for="Gluten Free">Gluten Free</label>
-        <input type="checkbox" value="Gluten Free" name="checkbox">
-        <br>
-        <label for="Ketogenic">Ketogenic</label>
-        <input type="checkbox" value="Ketogenic" name="checkbox">
-        <br>
-        <label for="Vegetarian">Vegetarian</label>
-        <input type="checkbox" value="Vegetarian" name="checkbox">
-        <br>
-        <label for="Lacto-Vegetarian">Lacto-Vegetarian</label>
-        <input type="checkbox" value="Lacto-Vegetarian" name="checkbox">
-        <br>
-        <label for="Ovo-Vegetarian">Ovo-Vegetarian</label>
-        <input type="checkbox" value="Ovo-Vegetarian" name="checkbox">
-        <br>
-        <label for="Vegan">Vegan</label>
-        <input type="checkbox" value="Vegan" name="checkbox">
-        <br>
-        <label for="Pescetarian">Pescetarian</label>
-        <input type="checkbox" value="Pescetarian" name="checkbox">
-        <br>
-        <label for="Paleo">Paleo</label>
-        <input type="checkbox" value="Paleo" name="checkbox">
-        <br>
-        <label for="Primal">Primal</label>
-        <input type="checkbox" value="Primal" name="checkbox">
-        <br>
-        <label for="Low FODMAP">Low FODMAP</label>
-        <input type="checkbox" value="Low FODMAP" name="checkbox">
-        <br>
-        <label for="Whole30">Whole30</label>
-        <input type="checkbox" value="Whole30" name="checkbox">
-        <br>
+        <ul>
+        {% for item in items %}
+            {% if item in checked %}
+                <li><input type="checkbox" name="checkbox" value="{{ item }}" checked>{{ item }}</li>
+            {% else %}
+                <li><input type="checkbox" name="checkbox" value="{{ item }}">{{ item }}</li>
+            {% endif %}
+        {% endfor %}
+        </ul>
         <button type="submit">Save</button>
     </form>
 {% endblock %}
