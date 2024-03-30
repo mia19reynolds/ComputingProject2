@@ -5,9 +5,9 @@
         <ul>
         {% for item in items %}
             {% if item in checked %}
-                <li><input type="checkbox" name="{{ title }}Checklist" value="{{ item }}" checked>{{ item }}</li>
+                <li><input type="checkbox" name="checkbox" value="{{ item }}" checked>{{ item }}</li>
             {% else %}
-                <li><input type="checkbox" name="{{ title }}Checklist" value="{{ item }}">{{ item }}</li>
+                <li><input type="checkbox" name="checkbox" value="{{ item }}">{{ item }}</li>
             {% endif %}
         {% endfor %}
         </ul>
