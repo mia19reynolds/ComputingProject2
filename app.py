@@ -399,7 +399,7 @@ def settingsDiets():
     
 @app.route('/settings/password', methods=['GET', 'POST'])
 @login_required
-def settingsResetPass():
+def settingsResetPassword():
     activeUser = current_user.id
     print("Active User: ", activeUser)
     if request.method == 'POST':
