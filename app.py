@@ -370,10 +370,8 @@ def settingsIntolerances():
     activeUser = current_user.id
     print("Active User: ", activeUser)
     if request.method == 'POST':
-        print('Settings form submitted')
         intolerances = request.form.getlist('checkbox')
         intolerancesString = ','.join(intolerances)
-        print(intolerancesString)
         cursor = db.cursor()
         cursor.execute("UPDATE user_data SET intolerances = %s WHERE email = %s", (intolerancesString, activeUser))
         db.commit()
@@ -381,6 +379,22 @@ def settingsIntolerances():
         return "Settings Applied"
     elif request.method == 'GET':
         return render_template('intolerances.html')
+
+@app.route('/settings/diets', methods=['GET', 'POST'])
+@login_required
+def settingsDiets():
+    activeUser = current_user.id
+    print("Active User: ", activeUser)
+    if request.method == 'POST':
+        diets = request.form.getlist('checkbox')
+        dietsString = ','.join(diets)
+        cursor = db.cursor()
+        cursor.execute("UPDATE user_data SET diets = %s WHERE email = %s", (dietsString, activeUser))
+        db.commit()
+        cursor.close()
+        return "Settings Applied"
+    elif request.method == 'GET':
+        return render_template('diets.html')
     
 def readDatabase(reqCol, table, column, value):
     print('read:', reqCol, table, column, value)
