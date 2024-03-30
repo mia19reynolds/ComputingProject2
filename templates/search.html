@@ -6,7 +6,7 @@
         <h1>Search Recipe</h1>
         <form action="{{ url_for('search') }}" method="post">
             <input id="searchBar type="text" name="query" value="{{ query }}">
-            {% with title='Cuisine', items=cuisines %}
+            {% with title='Cuisine', items=cuisines, checked=cuisine %}
                 {% include "dropdownChecklist.html" %}
             {% endwith %}
             <!-- <button type="submit">Search</button> -->

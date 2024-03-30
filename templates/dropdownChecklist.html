@@ -2,7 +2,11 @@
     <span class="anchor">{{ title }}</span>
     <ul class="items">
         {% for item in items %}
-        <li><input type="checkbox" name="{{ title }}Checklist" value="{{ item }}">{{ item }}</li>
+            {% if item in checked %}
+            <li><input type="checkbox" name="{{ title }}Checklist" value="{{ item }}" checked>{{ item }}</li>
+            {% else %}
+            <li><input type="checkbox" name="{{ title }}Checklist" value="{{ item }}">{{ item }}</li>
+            {% endif %}
         {% endfor %}
     </ul>
 </div>
