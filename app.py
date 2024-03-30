@@ -419,7 +419,7 @@ def settingsResetPass():
         else:
             return render_template('resetPassword.html', error='Incorrect password')
     elif request.method == 'GET':
-        return render_template('diets.html')
+        return render_template('resetPassword.html')
     
 def readDatabase(reqCol, table, column, value):
     print('read:', reqCol, table, column, value)
