@@ -220,7 +220,6 @@ def recipe():
 def signup():
     # activeUser = current_user.id
     # print("Active User: ", activeUser)
-    print('route accessed')
     if request.method == 'POST':
         print('form submitted')
         forename = request.form['forename']
@@ -395,6 +394,30 @@ def settingsDiets():
         db.commit()
         cursor.close()
         return "Settings Applied"
+    elif request.method == 'GET':
+        return render_template('diets.html')
+    
+@app.route('/settings/password', methods=['GET', 'POST'])
+@login_required
+def settingsResetPass():
+    activeUser = current_user.id
+    print("Active User: ", activeUser)
+    if request.method == 'POST':
+        oldPass = request.form['oldPass']
+        newPass = request.form['newPass']
+        newPassConfirm = request.form['newPassConfirm']
+        if check_password(activeUser, oldPass):
+            if newPass == newPassConfirm:
+                hashPass = generate_password_hash(newPass).decode('uft-8')
+                cursor = db.cursor()
+                cursor.execute("UPDATE users SET password = %s WHERE email = %s", (hashPass, activeUser))
+                db.commit()
+                cursor.close()
+                return render_template('resetPassword.html', error='Password changed')
+            else:
+                return render_template('resetPassword.html', error='Passwords do not match')
+        else:
+            return render_template('resetPassword.html', error='Incorrect password')
     elif request.method == 'GET':
         return render_template('diets.html')
     

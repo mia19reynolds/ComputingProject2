@@ -3,11 +3,6 @@
 {% include 'navbar.html' %}
 {% block main %}
     <h2>Signup</h2>
-    {% if error %}
-    <div class="alert alert-danger" role="alert">
-        {{ error | safe }}
-    </div>
-    {% endif %}
 
     <form method="post" action="{{ url_for('signup') }}">
         <label for="forename">Forename:</label>
