@@ -390,10 +390,10 @@ def settingsIntolerances():
         cursor.execute("UPDATE user_data SET intolerances = %s WHERE email = %s", (newIntolerancesString, activeUser))
         db.commit()
         cursor.close()
-        selectedIntolerances = readDatabase("intolerances", "user_data", "email", activeUser)[0].split(',')
+        selectedIntolerances = readDatabase("intolerances", "user_data", "email", activeUser).split(',')
         return render_template('intolerances.html', items=intolerances, checked=selectedIntolerances, alert='Intolerances updated')
     elif request.method == 'GET':
-        selectedIntolerances = readDatabase("intolerances", "user_data", "email", activeUser)[0].split(',')
+        selectedIntolerances = readDatabase("intolerances", "user_data", "email", activeUser).split(',')
         return render_template('intolerances.html', items=intolerances, checked=selectedIntolerances)
 
 @app.route('/settings/diets', methods=['GET', 'POST'])
@@ -444,7 +444,7 @@ def readDatabase(reqCol, table, column, value):
         result = cursor.fetchone()
         cursor.close()
         print('result:',result)
-        return result
+        return result[0]
     except Exception as e:
         print('read database error:', e)
 
