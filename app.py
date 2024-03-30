@@ -369,23 +369,37 @@ def settings():
 @login_required
 def settingsIntolerances():
     activeUser = current_user.id
-    print("Active User: ", activeUser)
+    selectedIntolerances = readDatabase("intolerances", "user_data", "email", activeUser)
+    intolerances = [
+        'Dairy',
+        'Dairy',
+        'Egg',
+        'Gluten',
+        'Grain',
+        'Peanut',
+        'Seafood',
+        'Sesame',
+        'Shellfish',
+        'Soy',
+        'Sulfite',
+        'Tree Nut',
+        'Wheat'
+    ]
     if request.method == 'POST':
-        intolerances = request.form.getlist('checkbox')
-        intolerancesString = ','.join(intolerances)
+        newIntolerances = request.form.getlist('checkbox')
+        newIntolerancesString = ','.join(newIntolerances)
         cursor = db.cursor()
-        cursor.execute("UPDATE user_data SET intolerances = %s WHERE email = %s", (intolerancesString, activeUser))
+        cursor.execute("UPDATE user_data SET intolerances = %s WHERE email = %s", (newIntolerancesString, activeUser))
         db.commit()
         cursor.close()
-        return render_template('intolerances.html', alert='Intolerances updated')
+        return render_template('intolerances.html', intolerances, selectedIntolerances, alert='Intolerances updated')
     elif request.method == 'GET':
-        return render_template('intolerances.html')
+        return render_template('intolerances.html', intolerances, selectedIntolerances)
 
 @app.route('/settings/diets', methods=['GET', 'POST'])
 @login_required
 def settingsDiets():
     activeUser = current_user.id
-    print("Active User: ", activeUser)
     if request.method == 'POST':
         diets = request.form.getlist('checkbox')
         dietsString = ','.join(diets)
