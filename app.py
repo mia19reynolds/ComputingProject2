@@ -116,6 +116,7 @@ def search():
 
             activeUser = current_user.id
             intolerances = readDatabase("intolerances", "user_data", "email", activeUser)
+            diets = readDatabase("diets", "user_data", "email", activeUser)
             query = request.args.get('query')
             cuisine = request.args.get('cuisine')
 
@@ -127,7 +128,8 @@ def search():
                 'apiKey': api_key,
                 'query': query,  # User written input (natural language)
                 'cuisine': cuisine,
-                'intolerances': intolerances
+                'intolerances': intolerances,
+                'diet': diets
             }
 
             print('Recipe search:',params)
