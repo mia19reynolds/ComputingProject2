@@ -281,8 +281,8 @@ def check_password(email, password):
             hashed_password_str = hashed_password[0]  # Convert bytes to string
             return check_password_hash(hashed_password_str, password)
     except Exception as e:
-        print(e)
-        return e
+        print('Password check error:',e)
+        return False
     
     return False
 
