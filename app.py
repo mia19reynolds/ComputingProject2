@@ -465,12 +465,16 @@ def readDatabase(reqCol, table, column, value):
         query = 'SELECT {} FROM {} WHERE {} = %s'.format(reqCol, table, column)
         cursor = mysql.get_db().cursor()
         cursor.execute(query, (value,))
-        result = cursor.fetchone()[0]
         cursor.close()
+        if cursor.fetchone()[0] is not None:
+            result = cursor.fetchone()[0]
+        else:
+            result = ''
         print('result:',result)
         return result
     except Exception as e:
         print('read database error:', e)
+        return ''
 
 def writeDatabase(table, columns, values):
     try:
