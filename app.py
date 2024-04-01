@@ -399,10 +399,10 @@ def settingsIntolerances():
         cursor.execute("UPDATE user_data SET intolerances = %s WHERE email = %s", (newIntolerancesString, activeUser))
         mysql.get_db().commit()
         cursor.close()
-        selectedIntolerances = readDatabase("intolerances", "user_data", "email", activeUser)
+        selectedIntolerances = readDatabase("intolerances", "user_data", "email", activeUser).split(',')
         return render_template('intolerances.html', items=intolerances, checked=selectedIntolerances, alert='Intolerances updated')
     elif request.method == 'GET':
-        selectedIntolerances = readDatabase("intolerances", "user_data", "email", activeUser)
+        selectedIntolerances = readDatabase("intolerances", "user_data", "email", activeUser).split(',')
         return render_template('intolerances.html', items=intolerances, checked=selectedIntolerances)
 
 @app.route('/settings/diets', methods=['GET', 'POST'])
@@ -429,10 +429,10 @@ def settingsDiets():
         cursor.execute("UPDATE user_data SET diets = %s WHERE email = %s", (newDietsString, activeUser))
         mysql.get_db().commit()
         cursor.close()
-        selectedDiets = readDatabase("diets", "user_data", "email", activeUser)
+        selectedDiets = readDatabase("diets", "user_data", "email", activeUser).split(',')
         return render_template('diets.html', items=diets, checked=selectedDiets, alert='Diets updated')
     elif request.method == 'GET':
-        selectedDiets = readDatabase("diets", "user_data", "email", activeUser)
+        selectedDiets = readDatabase("diets", "user_data", "email", activeUser).split(',')
         return render_template('diets.html', items=diets, checked=selectedDiets)
     
 @app.route('/settings/password', methods=['GET', 'POST'])
