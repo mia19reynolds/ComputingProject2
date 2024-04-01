@@ -399,10 +399,12 @@ def settingsIntolerances():
         cursor.execute('''UPDATE user_data SET intolerances = %s WHERE email = %s''', (newIntolerancesString, activeUser))
         mysql.connection.commit()
         cursor.close()
-        selectedIntolerances = readDatabase("intolerances", "user_data", "email", activeUser).split(',')
+        selectedIntolerances = readDatabase("intolerances", "user_data", "email", activeUser)
+        selectedIntolerances = convertToList(selectedIntolerances)
         return render_template('intolerances.html', items=intolerances, checked=selectedIntolerances, alert='Intolerances updated')
     elif request.method == 'GET':
-        selectedIntolerances = readDatabase("intolerances", "user_data", "email", activeUser).split(',')
+        selectedIntolerances = readDatabase("intolerances", "user_data", "email", activeUser)
+        selectedIntolerances = convertToList(selectedIntolerances)
         return render_template('intolerances.html', items=intolerances, checked=selectedIntolerances)
 
 @app.route('/settings/diets', methods=['GET', 'POST'])
@@ -429,10 +431,12 @@ def settingsDiets():
         cursor.execute('''UPDATE user_data SET diets = %s WHERE email = %s''', (newDietsString, activeUser))
         mysql.connection.commit()
         cursor.close()
-        selectedDiets = readDatabase("diets", "user_data", "email", activeUser).split(',')
+        selectedDiets = readDatabase("diets", "user_data", "email", activeUser)
+        selectedDiets = convertToList(selectedDiets)
         return render_template('diets.html', items=diets, checked=selectedDiets, alert='Diets updated')
     elif request.method == 'GET':
-        selectedDiets = readDatabase("diets", "user_data", "email", activeUser).split(',')
+        selectedDiets = readDatabase("diets", "user_data", "email", activeUser)
+        selectedDiets = convertToList(selectedDiets)
         return render_template('diets.html', items=diets, checked=selectedDiets)
     
 @app.route('/settings/password', methods=['GET', 'POST'])
@@ -458,6 +462,12 @@ def settingsResetPassword():
             return render_template('resetPassword.html', alert='Incorrect password')
     elif request.method == 'GET':
         return render_template('resetPassword.html')
+
+def convertToList(listString):
+    if listString is not None:
+        return listString.split(',')
+    else:
+        return ''
     
 def readDatabase(reqCol, table, column, value):
     print('read:', reqCol, table, column, value)
