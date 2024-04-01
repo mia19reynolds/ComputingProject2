@@ -1,5 +1,5 @@
 # import mysql.connector as mysql
-import flaskext.mysql as MySQL
+from flaskext.mysql import MySQL
 import requests
 from flask import Flask, request, render_template, redirect, url_for, session
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
