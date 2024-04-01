@@ -1,4 +1,5 @@
-import mysql.connector as mysql
+# import mysql.connector as mysql
+import flaskext.mysql as MySQL
 import requests
 from flask import Flask, request, render_template, redirect, url_for, session
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
@@ -16,21 +17,29 @@ app.secret_key = '123AMM'
 # app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)  # Example: session lasts for 7 days
 # app.config['SESSION_COOKIE_SECURE'] = True  # Ensure session cookies are only sent over HTTPS
 # app.config['SESSION_COOKIE_HTTPONLY'] = True  # Prevent JavaScript access to session cookies
+app.config['MYSQL_DATABASE_HOST'] = 'localhost'
+app.config['MYSQL_DATABASE_USER'] = 'app'
+app.config['MYSQL_DATABASE_PASSWORD'] = 'amm123'
+app.config['MYSQL_DATABASE_DB'] = 'Gyaldem'
 
 #API key
 api_key = "b1950d16d34842d6be06bca4c29ea1fb"
 
-HOST = "localhost"
-DATABASE = "Gyaldem"
-USER = "app"
-PASSWORD = "amm123"
+mysql = MySQL()
+mysql.init_app(app)
+db = mysql.get_db()
 
-db = mysql.connect(
-    host=HOST,
-    database=DATABASE,
-    user=USER,
-    password=PASSWORD
-)
+# HOST = "localhost"
+# DATABASE = "Gyaldem"
+# USER = "app"
+# PASSWORD = "amm123"
+
+# db = mysql.connect(
+#     host=HOST,
+#     database=DATABASE,
+#     user=USER,
+#     password=PASSWORD
+# )
 
 login_manager = LoginManager()
 login_manager.init_app(app)
