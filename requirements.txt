@@ -1,7 +1,7 @@
 # requirements.txt
 # mysql == 8.0.28
 bcrypt == 4.1.2
-Flask == 3.0.2
+Flask <= 2.3.3
 Flask-bcrypt == 1.0.1
 Flask-Login == 0.6.3
 Flask-Mysql == 1.5.2
