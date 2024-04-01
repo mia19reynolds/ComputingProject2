@@ -1,8 +1,9 @@
 # requirements.txt
-Flask<=2.3.3
+Flask
 Flask-Login
 Flask-bcrypt
-Flask-MySQL
+# Flask-MySQL
+Flask-MySQLdb
 Flask-Session
 Jinja2
 requests

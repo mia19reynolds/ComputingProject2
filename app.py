@@ -1,5 +1,6 @@
 # import mysql.connector as mysql
-from flaskext.mysql import MySQL
+# from flaskext.mysql import MySQL
+from flask_mysqldb import MySQL
 import requests
 from flask import Flask, request, render_template, redirect, url_for, session
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
@@ -17,16 +18,15 @@ app.secret_key = '123AMM'
 # app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)  # Example: session lasts for 7 days
 # app.config['SESSION_COOKIE_SECURE'] = True  # Ensure session cookies are only sent over HTTPS
 # app.config['SESSION_COOKIE_HTTPONLY'] = True  # Prevent JavaScript access to session cookies
-app.config['MYSQL_DATABASE_HOST'] = 'localhost'
-app.config['MYSQL_DATABASE_USER'] = 'app'
-app.config['MYSQL_DATABASE_PASSWORD'] = 'amm123'
-app.config['MYSQL_DATABASE_DB'] = 'Gyaldem'
+app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_USER'] = 'app'
+app.config['MYSQL_PASSWORD'] = 'amm123'
+app.config['MYSQL_DB'] = 'Gyaldem'
 
 #API key
 api_key = "b1950d16d34842d6be06bca4c29ea1fb"
 
-mysql = MySQL()
-mysql.init_app(app)
+mysql = MySQL(app)
 
 # HOST = "localhost"
 # DATABASE = "Gyaldem"
@@ -247,9 +247,9 @@ def signup():
 
                 else:
                     hashed_password = generate_password_hash(password).decode('utf-8')
-                    cursor = mysql.get_db().cursor()
-                    cursor.execute("INSERT INTO users (forename, lastname, email, password) VALUES (%s, %s, %s, %s)", (forename, lastname, email, hashed_password))
-                    mysql.get_db().commit()
+                    cursor = mysql.connection.cursor()
+                    cursor.execute('''INSERT INTO users (forename, lastname, email, password) VALUES (%s, %s, %s, %s)''', (forename, lastname, email, hashed_password))
+                    mysql.connection.commit()
                     cursor.close()
                     # Log in the user after signup
                     user = User(email=email, forename=forename)
@@ -271,7 +271,7 @@ def signup():
 
 # Check if login exists
 def login_exists(email):
-    cursor = mysql.get_db().cursor()
+    cursor = mysql.connection.cursor()
     try:
         count = readDatabase('COUNT(*)', 'users', 'email', email)
         if count:
@@ -281,7 +281,7 @@ def login_exists(email):
         cursor.close()
 
 def check_password(email, password):
-    # cursor = mysql.get_db().cursor()
+    # cursor = mysql.connection.cursor()
     try:
         hashed_password = readDatabase('password', 'users', 'email', email)
         
@@ -395,9 +395,9 @@ def settingsIntolerances():
     if request.method == 'POST':
         newIntolerances = request.form.getlist('checkbox')
         newIntolerancesString = ','.join(newIntolerances)
-        cursor = mysql.get_db().cursor()
-        cursor.execute("UPDATE user_data SET intolerances = %s WHERE email = %s", (newIntolerancesString, activeUser))
-        mysql.get_db().commit()
+        cursor = mysql.connection.cursor()
+        cursor.execute('''UPDATE user_data SET intolerances = %s WHERE email = %s''', (newIntolerancesString, activeUser))
+        mysql.connection.commit()
         cursor.close()
         selectedIntolerances = readDatabase("intolerances", "user_data", "email", activeUser).split(',')
         return render_template('intolerances.html', items=intolerances, checked=selectedIntolerances, alert='Intolerances updated')
@@ -425,9 +425,9 @@ def settingsDiets():
     if request.method == 'POST':
         newDiets = request.form.getlist('checkbox')
         newDietsString = ','.join(newDiets)
-        cursor = mysql.get_db().cursor()
-        cursor.execute("UPDATE user_data SET diets = %s WHERE email = %s", (newDietsString, activeUser))
-        mysql.get_db().commit()
+        cursor = mysql.connection.cursor()
+        cursor.execute('''UPDATE user_data SET diets = %s WHERE email = %s''', (newDietsString, activeUser))
+        mysql.connection.commit()
         cursor.close()
         selectedDiets = readDatabase("diets", "user_data", "email", activeUser).split(',')
         return render_template('diets.html', items=diets, checked=selectedDiets, alert='Diets updated')
@@ -447,9 +447,9 @@ def settingsResetPassword():
         if check_password(activeUser, oldPass):
             if newPass == newPassConfirm:
                 hashPass = generate_password_hash(newPass).decode('utf-8')
-                cursor = mysql.get_db().cursor()
-                cursor.execute("UPDATE users SET password = %s WHERE email = %s", (hashPass, activeUser))
-                mysql.get_db().commit()
+                cursor = mysql.connection.cursor()
+                cursor.execute('''UPDATE users SET password = %s WHERE email = %s''', (hashPass, activeUser))
+                mysql.connection.commit()
                 cursor.close()
                 return render_template('resetPassword.html', alert='Password changed')
             else:
@@ -463,13 +463,10 @@ def readDatabase(reqCol, table, column, value):
     print('read:', reqCol, table, column, value)
     try:
         query = 'SELECT {} FROM {} WHERE {} = %s'.format(reqCol, table, column)
-        cursor = mysql.get_db().cursor()
+        cursor = mysql.connection.cursor()
         cursor.execute(query, (value,))
+        result = cursor.fetchone()[0]
         cursor.close()
-        if cursor.fetchone()[0] is not None:
-            result = cursor.fetchone()[0]
-        else:
-            result = ''
         print('result:',result)
         return result
     except Exception as e:
@@ -478,9 +475,9 @@ def readDatabase(reqCol, table, column, value):
 
 def writeDatabase(table, columns, values):
     try:
-        query = 'INSERT INTO {} ({}) VALUES ({})'.format(table, columns, values)
+        query = '''INSERT INTO {} ({}) VALUES ({})'''.format(table, columns, values)
         print('write:', query)
-        cursor = mysql.get_db().cursor()
+        cursor = mysql.connection.cursor()
         cursor.execute(query)
         result = cursor.fetchone()
         cursor.close()
