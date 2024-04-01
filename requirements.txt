@@ -1,6 +1,7 @@
 # requirements.txt
 Flask
-Flask-MySQLdb
+Flask-Login
+Flask-bcrypt
+Flask-MySQL
 Jinja2
 requests
-mysql-connector-python
