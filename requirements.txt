@@ -3,5 +3,6 @@ Flask<=2.3.3
 Flask-Login
 Flask-bcrypt
 Flask-MySQL
+Flask-Session
 Jinja2
 requests
