@@ -228,7 +228,7 @@ def saveRecipe():
     activeUser = current_user.id
     recipeId = request.args.get('id')
     savedRecipes = convertToList(readDatabase('saved_recipes', 'user_data', 'email', activeUser))
-    if recipeId in saveRecipe:
+    if recipeId in savedRecipes:
         print('recipe already saved')
         return redirect(url_for('recipe', id=recipeId))
     else:
