@@ -489,7 +489,7 @@ def convertToList(listString):
     if listString is not None:
         return listString.split(',')
     else:
-        return ''
+        return []
     
 def readDatabase(reqCol, table, column, value):
     print('read:', reqCol, table, column, value)
