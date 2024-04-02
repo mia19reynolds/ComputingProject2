@@ -42,6 +42,7 @@ mysql = MySQL(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
+login_manager.login_view = 'login'
 
 # Session(app)
 
@@ -220,31 +221,6 @@ def recipe():
     # Optionally, handle unauthorized access here
     return redirect(url_for('login'))  # Redirect unauthenticated users to the login page
 
-    # # Get recipe id from URL parameter
-    # recipeId = request.args.get('id')
-
-    # # Endpoint URL
-    # endpoint = "https://api.spoonacular.com/recipes/{0}/information".format(recipeId)
-
-    # #  Search paramerters
-    # params = {
-    #     'apiKey': api_key,
-    # }
-
-    # # GET request
-    # response = requests.get(endpoint, params=params)
-
-    # # Check if request was successful 
-    # if response.status_code == 200:
-    #     # Parse JSON response
-    #     recipe = response.json()
-
-    #     # Return webpage
-    #     return render_template('recipe.html', recipe=recipe)
-
-    # else:
-    #     print('Error: ', response.status_code)
-
 # User sign up 
 @app.route('/signup', methods=['POST', 'GET'])
 def signup():
@@ -293,17 +269,15 @@ def signup():
 
 # Check if login exists
 def login_exists(email):
-    cursor = mysql.connection.cursor()
     try:
         count = readDatabase('COUNT(*)', 'users', 'email', email)
         if count:
             return True
         else: return False
-    finally:
-        cursor.close()
+    except Exception as e:
+        return False
 
 def check_password(email, password):
-    # cursor = mysql.connection.cursor()
     try:
         hashed_password = readDatabase('password', 'users', 'email', email)
         
