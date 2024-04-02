@@ -229,9 +229,12 @@ def saveRecipe():
     recipeId = request.args.get('id')
     # savedRecipes = readDatabase('saved_recipes', 'user_data', 'email', activeUser)
     savedRecipes = recipeId
-    cursor = mysql.connection.cursor()
-    cursor.execute('''UPDATE user_data SET saved_recipes=%s WHERE email=%s''',(savedRecipes, activeUser))
-    cursor.close()
+    try:
+        cursor = mysql.connection.cursor()
+        cursor.execute('''UPDATE user_data SET saved_recipes=%s WHERE email=%s''',(savedRecipes, activeUser))
+        cursor.close()
+    except Exception as e:
+        print(e)
     return redirect(url_for('recipe', id=recipeId))
 
 # User sign up 
