@@ -24,7 +24,7 @@ app.config['MYSQL_PASSWORD'] = 'amm123'
 app.config['MYSQL_DB'] = 'Gyaldem'
 
 #API key
-api_key = "b1950d16d34842d6be06bca4c29ea1fb"
+api_key = "653ac8f884cb4c99bdd950abd9d769c9"
 
 mysql = MySQL(app)
 
