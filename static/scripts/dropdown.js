@@ -3,9 +3,6 @@ document.addEventListener("DOMContentLoaded", function() {
     var dropdowns = document.getElementsByClassName('dropdown');
     for(var i=0; i<dropdowns.length; i++){
         dropdowns[i].getElementsByClassName('anchor')[0].onclick = function(evt) {
-            console.log('clicked');
-            console.log(this.parentElement.classList)
-    
             if (this.parentElement.classList.contains('visible')){
                 this.parentElement.classList.remove('visible');
             }else{
