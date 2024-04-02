@@ -2,7 +2,9 @@
 {% block title %}Dashboard{% endblock %}
 {% include 'navbarActive.html' %}
 {% block main %}
-    <h2>Dashboard</h2>
-    <p>Welcome message needs to show up here with the users name</p>
-    <p>Think of some other icons and links for this page</p>
+    <h1>Dashboard</h1>
+    <h2>Saved Recipes</h2>
+    {{ for recipe in recipes: }}
+        <a href="{{ url_for('recipe', id=recipe['id'])}}">{{ recipe['title'] }}</a>
+    {{ endfor }}
 {% endblock %}

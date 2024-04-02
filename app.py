@@ -353,17 +353,23 @@ def login():
 @login_required
 def dashboard():
     activeUser = current_user.id
-    print("Active User: ", activeUser)
-    print(current_user.is_authenticated)
-    print(current_user.is_active)
-
-    print("Current user:", current_user)
     if request.method == 'POST':
-        print("Current user:", current_user)
         return render_template('dashboard.html')
     elif request.method == 'GET':
-        print("Current user:", current_user)
-        return render_template('dashboard.html')
+        savedRecipes = convertToList(readDatabase('saved_recipes', 'user_data', 'email', activeUser))
+        endpoint = "https://api.spoonacular.com/recipes/informationBulk"
+        params = {
+            'apiKey': api_key,
+            'ids': savedRecipes
+        }
+        print('params:',params)
+        response = requests.get(endpoint, params=params)
+        if response.status_code == 200:
+            recipes = response.json()
+            print('response:', recipes)
+            return render_template('dashboard.html', recipes=recipes)
+        else:
+            return render_template('dashboard.html', alert=response.status_code)
 
 @app.route('/faqs', methods=['GET', 'POST'])
 def faqs():
