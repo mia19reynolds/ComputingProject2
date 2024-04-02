@@ -232,7 +232,7 @@ def saveRecipe():
         print('recipe already saved')
         return redirect(url_for('recipe', id=recipeId))
     else:
-        savedRecipes = savedRecipes + recipeId + ","
+        savedRecipes.append(recipeId)
         try:
             cursor = mysql.connection.cursor()
             cursor.execute('''UPDATE user_data SET saved_recipes=%s WHERE email=%s''',(savedRecipes, activeUser))
