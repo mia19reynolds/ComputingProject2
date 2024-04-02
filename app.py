@@ -108,25 +108,38 @@ def search():
         'Thai',
         'Vietnamese'
     ]
-    
+    types = [
+        'main course',
+        'side dish',
+        'dessert',
+        'appetizer'
+        'salad',
+        'bread',
+        'breakfast',
+        'soup',
+        'beverage',
+        'sauce',
+        'marinade',
+        'fingerfood',
+        'snack',
+        'drink'
+    ]
     if request.method == 'POST':
-        activeUser = current_user.id
-        intolerances = readDatabase("intolerances", "user_data", "email", activeUser)
         query = request.form['query']
         cuisine = ','.join(request.form.getlist('CuisineChecklist'))
-        print('cuisine:',cuisine)
+        type = ','.join(request.form.getlist('TypeChecklist'))
         return redirect(url_for('search', query=query, cuisine=cuisine))
  
     else:
         # Handle GET requests (e.g., render form)
 
         try:
-
             activeUser = current_user.id
             intolerances = readDatabase("intolerances", "user_data", "email", activeUser)
             diets = readDatabase("diets", "user_data", "email", activeUser)
             query = request.args.get('query')
             cuisine = request.args.get('cuisine')
+            type = request.args.get('type')
 
             # Endpoint URL
             endpoint = 'https://api.spoonacular.com/recipes/complexSearch'
@@ -137,7 +150,8 @@ def search():
                 'query': query,  # User written input (natural language)
                 'cuisine': cuisine,
                 'intolerances': intolerances,
-                'diet': diets
+                'diet': diets,
+                'type': type
             }
 
             print('Recipe search:',params)
@@ -157,7 +171,15 @@ def search():
                 results.append(result)
 
             # Return webpage
-            return render_template('search.html', cuisine=cuisine, results=results, query=query, cuisines=cuisines)
+            return render_template(
+                'search.html',
+                results=results,
+                query=query, 
+                cuisine=cuisine,
+                cuisines=cuisines,
+                type=type,
+                types=types
+            )
         
         except Exception as e:
             print('An unexpected error occurred:', e)

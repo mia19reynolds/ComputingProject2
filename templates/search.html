@@ -9,6 +9,9 @@
             {% with title='Cuisine', items=cuisines, checked=cuisine %}
                 {% include "dropdownChecklist.html" %}
             {% endwith %}
+            {% with title='Type', items=types, checked=type %}
+                {% include "dropdownChecklist.html" %}
+            {% endwith %}
             <!-- <button type="submit">Search</button> -->
         </form>
     </div>
