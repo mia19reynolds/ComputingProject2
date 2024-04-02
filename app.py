@@ -112,7 +112,7 @@ def search():
         'main course',
         'side dish',
         'dessert',
-        'appetizer'
+        'appetizer',
         'salad',
         'bread',
         'breakfast',
