@@ -228,7 +228,7 @@ def saveRecipe():
     activeUser = current_user.id
     recipeId = request.args.get('id')
     # savedRecipes = readDatabase('saved_recipes', 'user_data', 'email', activeUser)
-    savedRecipes = recipeId
+    savedRecipes = str(recipeId)
     try:
         cursor = mysql.connection.cursor()
         cursor.execute('''UPDATE user_data SET saved_recipes=%s WHERE email=%s''',(savedRecipes, activeUser))
