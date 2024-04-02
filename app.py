@@ -227,14 +227,19 @@ def recipe():
 def saveRecipe():
     activeUser = current_user.id
     recipeId = request.args.get('id')
-    savedRecipes = str(readDatabase('saved_recipes', 'user_data', 'email', activeUser)) + str(recipeId) + ', '
-    try:
-        cursor = mysql.connection.cursor()
-        cursor.execute('''UPDATE user_data SET saved_recipes=%s WHERE email=%s''',(savedRecipes, activeUser))
-        mysql.connection.commit()
-        cursor.close()
-    except Exception as e:
-        print(e)
+    savedRecipes = convertToList(readDatabase('saved_recipes', 'user_data', 'email', activeUser))
+    if recipeId in saveRecipe:
+        print('recipe already saved')
+        return redirect(url_for('recipe', id=recipeId))
+    else:
+        savedRecipes = savedRecipes + recipeId + ","
+        try:
+            cursor = mysql.connection.cursor()
+            cursor.execute('''UPDATE user_data SET saved_recipes=%s WHERE email=%s''',(savedRecipes, activeUser))
+            mysql.connection.commit()
+            cursor.close()
+        except Exception as e:
+            print(e)
     return redirect(url_for('recipe', id=recipeId))
 
 # User sign up 
