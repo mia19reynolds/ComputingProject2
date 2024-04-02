@@ -128,7 +128,7 @@ def search():
         query = request.form['query']
         cuisine = ','.join(request.form.getlist('CuisineChecklist'))
         type = ','.join(request.form.getlist('TypeChecklist'))
-        return redirect(url_for('search', query=query, cuisine=cuisine))
+        return redirect(url_for('search', query=query, cuisine=cuisine, type=type))
  
     else:
         # Handle GET requests (e.g., render form)
