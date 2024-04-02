@@ -225,7 +225,13 @@ def recipe():
 @app.route('/saveRecipe', methods=['POST', 'GET'])
 @login_required
 def saveRecipe():
-    print(request.args.get('id'))
+    activeUser = current_user.id
+    recipeId = request.args.get('id')
+    savedRecipes = readDatabase('saved_recipes', 'user_data', 'email', activeUser) + recipeId +','
+    cursor = mysql.connection.cursor()
+    cursor.execute('''UPDATE user_data SET saved_recipes=%s WHERE email=%s''',(savedRecipes, activeUser))
+    cursor.close()
+    return redirect(url_for('recipe', id=recipeId), alert='Recipe saved')
 
 # User sign up 
 @app.route('/signup', methods=['POST', 'GET'])
