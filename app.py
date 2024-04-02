@@ -356,7 +356,7 @@ def dashboard():
     if request.method == 'POST':
         return render_template('dashboard.html')
     elif request.method == 'GET':
-        savedRecipes = convertToList(readDatabase('saved_recipes', 'user_data', 'email', activeUser)[0])
+        savedRecipes = readDatabase('saved_recipes', 'user_data', 'email', activeUser)[0]
         endpoint = "https://api.spoonacular.com/recipes/informationBulk"
         params = {
             'apiKey': api_key,
