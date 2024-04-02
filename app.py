@@ -492,7 +492,7 @@ def readDatabase(reqCol, table, column, value):
         query = 'SELECT {} FROM {} WHERE {} = %s'.format(reqCol, table, column)
         cursor = mysql.connection.cursor()
         cursor.execute(query, (value,))
-        result = cursor.fetchone()[0]
+        result = cursor.fetchone()
         cursor.close()
         print('result:',result)
         return result

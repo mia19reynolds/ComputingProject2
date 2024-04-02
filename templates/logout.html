@@ -4,7 +4,7 @@
 {% block main %}
     <h2>Logout</h2>
     {% if current_user.is_authenticated %}
-        <p>Are you sure you want to logout, {{ current_user.id }}?</p>
+        <p>Are you sure you want to logout, {{ current_user.forename }}?</p>
         <form method="post" action="{{ url_for('logout') }}">
             <button type="submit">Logout</button>
         </form>
