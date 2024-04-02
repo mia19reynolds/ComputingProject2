@@ -235,7 +235,7 @@ def saveRecipe():
         savedRecipes.append(recipeId)
         try:
             cursor = mysql.connection.cursor()
-            cursor.execute('''UPDATE user_data SET saved_recipes=%s WHERE email=%s''',(str(savedRecipes), activeUser))
+            cursor.execute('''UPDATE user_data SET saved_recipes=%s WHERE email=%s''',(','.join(savedRecipes), activeUser))
             mysql.connection.commit()
             cursor.close()
         except Exception as e:
