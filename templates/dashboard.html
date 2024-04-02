@@ -5,6 +5,15 @@
     <h1>Dashboard</h1>
     <h2>Saved Recipes</h2>
     {% for recipe in recipes %}
-        <a href="{{ url_for('recipe', id=recipe['id'])}}">{{ recipe['title'] }}</a>
+    <a href="{{ url_for('recipe', id=recipe['id']) }}">
+    <!-- <a href="http://127.0.0.1:5000/recipe?id={{ result['id'] }}"> -->
+
+        <div>
+            <h3>{{ recipe['title'] }}</h2>
+            <img src="{{ recipe['image'] }}">
+        </div>
+    </a>
+    <hr>
     {% endfor %}
+    
 {% endblock %}
