@@ -366,7 +366,6 @@ def dashboard():
         response = requests.get(endpoint, params=params)
         if response.status_code == 200:
             recipes = response.json()
-            print('response:', recipes)
             return render_template('dashboard.html', recipes=recipes)
         else:
             return render_template('dashboard.html', alert=response.status_code)
