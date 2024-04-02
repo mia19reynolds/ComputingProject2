@@ -4,7 +4,7 @@
 {% block main %}
     <h1>Dashboard</h1>
     <h2>Saved Recipes</h2>
-    {{ for recipe in recipes }}
+    {% for recipe in recipes %}
         <a href="{{ url_for('recipe', id=recipe['id'])}}">{{ recipe['title'] }}</a>
-    {{ endfor }}
+    {% endfor %}
 {% endblock %}
