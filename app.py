@@ -300,10 +300,9 @@ def login_exists(email):
 
 def check_password(email, password):
     try:
-        hashed_password = readDatabase('password', 'users', 'email', email)
+        hashed_password = readDatabase('password', 'users', 'email', email)[0]
         
         if hashed_password:
-            # hashed_password_str = hashed_password[0]  # Convert bytes to string
             print('check password hash:',check_password_hash(hashed_password, password))
             return check_password_hash(hashed_password, password)
     except Exception as e:
@@ -416,11 +415,11 @@ def settingsIntolerances():
         cursor.execute('''UPDATE user_data SET intolerances = %s WHERE email = %s''', (newIntolerancesString, activeUser))
         mysql.connection.commit()
         cursor.close()
-        selectedIntolerances = readDatabase("intolerances", "user_data", "email", activeUser)
+        selectedIntolerances = readDatabase("intolerances", "user_data", "email", activeUser)[0]
         selectedIntolerances = convertToList(selectedIntolerances)
         return render_template('intolerances.html', items=intolerances, checked=selectedIntolerances, alert='Intolerances updated')
     elif request.method == 'GET':
-        selectedIntolerances = readDatabase("intolerances", "user_data", "email", activeUser)
+        selectedIntolerances = readDatabase("intolerances", "user_data", "email", activeUser)[0]
         selectedIntolerances = convertToList(selectedIntolerances)
         return render_template('intolerances.html', items=intolerances, checked=selectedIntolerances)
 
@@ -448,11 +447,11 @@ def settingsDiets():
         cursor.execute('''UPDATE user_data SET diets = %s WHERE email = %s''', (newDietsString, activeUser))
         mysql.connection.commit()
         cursor.close()
-        selectedDiets = readDatabase("diets", "user_data", "email", activeUser)
+        selectedDiets = readDatabase("diets", "user_data", "email", activeUser)[0]
         selectedDiets = convertToList(selectedDiets)
         return render_template('diets.html', items=diets, checked=selectedDiets, alert='Diets updated')
     elif request.method == 'GET':
-        selectedDiets = readDatabase("diets", "user_data", "email", activeUser)
+        selectedDiets = readDatabase("diets", "user_data", "email", activeUser)[0]
         selectedDiets = convertToList(selectedDiets)
         return render_template('diets.html', items=diets, checked=selectedDiets)
     
