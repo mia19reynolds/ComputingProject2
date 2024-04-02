@@ -232,7 +232,7 @@ def saveRecipe():
     cursor = mysql.connection.cursor()
     cursor.execute('''UPDATE user_data SET saved_recipes=%s WHERE email=%s''',(savedRecipes, activeUser))
     cursor.close()
-    return redirect(url_for('recipe', id=recipeId), alert='Recipe saved')
+    return redirect(url_for('recipe', id=recipeId))
 
 # User sign up 
 @app.route('/signup', methods=['POST', 'GET'])
