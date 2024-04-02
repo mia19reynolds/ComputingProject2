@@ -1,13 +1,17 @@
 document.addEventListener("DOMContentLoaded", function() {
 
-    var checkList = document.getElementById('list1');
-    checkList.getElementsByClassName('anchor')[0].onclick = function(evt) {
-        console.log('clicked');
-
-        if (checkList.classList.contains('visible')){
-            checkList.classList.remove('visible');
-        }else{
-            checkList.classList.add('visible');
+    var dropdowns = document.getElementsByClassName('dropdown');
+    for(var i=0; i<dropdowns.length; i++){
+        dropdowns[i].getElementsByClassName('anchor')[0].onclick = function(evt) {
+            console.log('clicked');
+    
+            if (dropdowns[i].classList.contains('visible')){
+                dropdowns[i].classList.remove('visible');
+            }else{
+                dropdowns[i].classList.add('visible');
+            }
         }
     }
+    
+
 });

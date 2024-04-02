@@ -183,7 +183,7 @@ def search():
         
         except Exception as e:
             print('An unexpected error occurred:', e)
-            return render_template('search.html')
+            return render_template('search.html', alert=e)
 
 @app.route('/recipe', methods=['GET', 'POST'])
 @login_required
