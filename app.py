@@ -221,6 +221,12 @@ def recipe():
     # Optionally, handle unauthorized access here
     return redirect(url_for('login'))  # Redirect unauthenticated users to the login page
 
+# Save recipe to user_data
+@app.route('/saveRecipe', methods=['POST', 'GET'])
+@login_required
+def saveRecipe():
+    print(request.args.get('id'))
+
 # User sign up 
 @app.route('/signup', methods=['POST', 'GET'])
 def signup():

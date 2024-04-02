@@ -2,10 +2,13 @@
 {% block title %}{{ recipe.title }}{% endblock %}
 {% include 'navbarActive.html' %}
 {% block main %}
-    <h1>{{ recipe.title }}</h1>
-    <img src="{{ recipe['image'] }}">
-    <p>{{ recipe.summary|safe }}</p>
-    <p>Makes {{ recipe.servings }} servings</p>
+    <div id="recipeInfo">
+        <h1>{{ recipe.title }}</h1>
+        <img src="{{ recipe['image'] }}">
+        <p>{{ recipe.summary|safe }}</p>
+        <p>Makes {{ recipe.servings }} servings</p>
+        <a href="{{ url_for('saveRecipe', id=recipe.id) }}">Save Recipe</a>
+    </div>
     <h2>Ingredients</h2>
     <ul>
         {% for ingredient in recipe.extendedIngredients %}
