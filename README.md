@@ -73,9 +73,3 @@ By following these steps, you can deploy and host your Flask application on AWS 
 4. **User Authentication**: Users can sign up for a new account or log in with their existing credentials.
 5. **User Dashboard**: Authenticated users have access to a personalized dashboard where they can view their saved recipes and update their account settings, including dietary preferences and intolerances.
 6. **Save Recipes**: Authenticated users can save their favorite recipes to their account for future reference.
-
-## Contributors
-
-- [Your Name](https://github.com/your_username)
-- [Contributor 1](https://github.com/contributor1)
-- [Contributor 2](https://github.com/contributor2)
