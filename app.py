@@ -13,11 +13,6 @@ app = Flask(__name__)
 # Secret key for session management
 app.secret_key = '123AMM'
 
-# app.config['SESSION_TYPE'] = 'filesystem'
-# app.config['SESSION_PERMANENT'] = True
-# app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)  # Example: session lasts for 7 days
-# app.config['SESSION_COOKIE_SECURE'] = True  # Ensure session cookies are only sent over HTTPS
-# app.config['SESSION_COOKIE_HTTPONLY'] = True  # Prevent JavaScript access to session cookies
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'app'
 app.config['MYSQL_PASSWORD'] = 'amm123'
@@ -27,18 +22,6 @@ app.config['MYSQL_DB'] = 'Gyaldem'
 api_key = "653ac8f884cb4c99bdd950abd9d769c9"
 
 mysql = MySQL(app)
-
-# HOST = "localhost"
-# DATABASE = "Gyaldem"
-# USER = "app"
-# PASSWORD = "amm123"
-
-# db = mysql.connect(
-#     host=HOST,
-#     database=DATABASE,
-#     user=USER,
-#     password=PASSWORD
-# )
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -527,23 +510,3 @@ def logout():
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=80, use_reloader=False)
-
-
-# # Dynamic recipe options
-# selectedCuisine = 'there will be a drop down menu'
-# excludedCuisine = 'there will be a drop down menu'
-# diet = 'users with accounts can select a specific diet, several options are allowed'
-# intolerances = 'users with accounts can select intolerances'
-# includeIngredients = 'ingredients that must be used'
-# excludeIngredient = 'ingredients that the recipe must not contain'
-# recipeNutrition = 'nutrition information included'
-# maxReadyTime = 'how long you would like to spend cooking'
-
-
-#     # 'cuisine': selectedCuisine,
-#     # 'excludeCuisine': excludedCuisine,
-#     # 'diet': diet,
-#     # 'intolerances': intolerances,
-#     # 'addRecipeNutrition': recipeNutrition,
-#     # 'maxReadyTime': maxReadyTime,
-#     'number': 5 
