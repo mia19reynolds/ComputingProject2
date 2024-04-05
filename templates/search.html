@@ -17,11 +17,10 @@
     </div>
     {% for result in results %}
     <a href="{{ url_for('recipe', id=result['id']) }}">
-    <!-- <a href="http://127.0.0.1:5000/recipe?id={{ result['id'] }}"> -->
-
-        <div>
+        <div class="card">
             <h3>{{ result['title'] }}</h2>
             <img src="{{ result['image'] }}">
+            <a href="{{ url_for('saveRecipe', id=recipe.id) }}">Save Recipe</a>
         </div>
     </a>
     <hr>
